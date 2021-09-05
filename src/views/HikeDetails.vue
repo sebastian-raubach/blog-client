@@ -35,7 +35,7 @@
 
       <b-row class="pt-5" v-if="hike.hills">
         <b-col cols="12" md="4" v-for="hill in hike.hills" :key="`hill-card-${hill.id}`" class="hike-stats">
-          <b-card no-body class="hill">
+          <b-card no-body class="hill mb-4">
             <b-card-body>
               <b-card-title class="text-light">{{ hill.name }}</b-card-title>
             </b-card-body>

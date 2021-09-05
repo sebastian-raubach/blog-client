@@ -384,7 +384,7 @@ export default {
         date: this.isSet(this.newPost.date),
         images: this.newPost.images.filter(i => i.file).map(i => this.isSet(i.description) && this.isSet(i.file)).reduce((a, b) => a && b, true),
         videos: this.newPost.videos.map(v => this.isSet(v)).reduce((a, b) => a && b, true),
-        hills: this.newPost.type === 'news' || (this.newPost.hills.length > 0 && this.newPost.hills.map(h => this.isSet(h.type) && this.isSet(h.latitude) && this.isSet(h.longitude) && this.isSet(h.elevation) && this.isSet(h.name)).reduce((a, b) => a && b, true)),
+        hills: this.newPost.type === 'news' || (this.newPost.hills.map(h => this.isSet(h.type) && this.isSet(h.latitude) && this.isSet(h.longitude) && this.isSet(h.elevation) && this.isSet(h.name)).reduce((a, b) => a && b, true)),
         gpx: this.newPost.type === 'news' || this.isSet(this.newPost.gpxFile),
         elevationProfile: this.newPost.type === 'news' || this.isSet(this.newPost.elevationProfile),
         timeDistanceProfile: this.newPost.type === 'news' || this.isSet(this.newPost.timeDistanceProfile),
