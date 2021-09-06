@@ -12,14 +12,15 @@
             <b-card-body>
               <div class="media d-flex">
                 <div class="media-body text-left">
-                  <h3 class="text-primary">{{ hill.count }}/{{ hillTypes[hill.type].count }}</h3>
+                  <h3 class="text-primary">{{ hill.count }}<template v-if="hillTypes[hill.type].count">/{{ hillTypes[hill.type].count }}</template></h3>
                   <h5 class="text-muted">{{ hillTypes[hill.type].name }}</h5>
                 </div>
                 <div class="align-self-center">
                   <i class="icofont-5x icofont-hill float-right"></i>
                 </div>
               </div>
-              <b-progress variant="primary" class="mt-2 mb-0" :value="hill.count" :max="hillTypes[hill.type].count" />
+              <b-progress variant="primary" striped animated class="mt-2 mb-0" :value="hill.count" :max="hillTypes[hill.type].count" v-if="hillTypes[hill.type].count" />
+              <b-progress variant="primary" class="mt-2 mb-0" :value="0" :max="0" v-else />
             </b-card-body>
           </b-card>
         </b-col>
@@ -69,8 +70,12 @@ export default {
     }
   },
   watch: {
-    year: function () {
+    year: function (newValue) {
       this.updateHikes()
+
+      if (this.$router.currentRoute.name !== 'hikes-year' || !this.$router.currentRoute.params || this.$router.currentRoute.params.year !== newValue) {
+        this.$router.replace({ name: 'hikes-year', params: { year: newValue } })
+      }
     }
   },
   mixins: [api],
@@ -82,16 +87,24 @@ export default {
     }
   },
   mounted: function () {
+    const yearParam = this.$route.params.year
+
+    if (yearParam) {
+      this.year = yearParam
+    }
+
     this.apiGetHikeYears(result => {
       this.hikeYears = result
 
       this.hikeYearOptions = result.map(y => {
         return {
           value: y.year,
-          text: y.year
+          text: `${y.year} - ${y.count} Wanderungen`
         }
       })
-      this.year = result[0].year
+      if (!this.year) {
+        this.year = result[0].year
+      }
     })
 
     this.apiGetHillTypes(result => {

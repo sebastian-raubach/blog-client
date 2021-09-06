@@ -129,6 +129,9 @@ export default {
     apiGetHikesForYear: function (year, onSuccess, onError) {
       return this.axios({ url: 'hike', params: { year: year }, success: onSuccess, error: onError })
     },
+    apiGetHills: function (name, onSuccess, onError) {
+      return this.axios({ url: 'hill', params: { name: name }, success: onSuccess, error: onError })
+    },
     /**
      * Returns the current authentication token
      */

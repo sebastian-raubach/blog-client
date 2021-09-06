@@ -105,6 +105,12 @@
 
             <b-form-select :options="hillTypeOptions" v-model="tempHill.type" :state="formState.hills" />
             <b-form-input v-model="tempHill.name" placeholder="Name" :state="formState.hills" />
+            <VueTypeaheadBootstrap v-model="tempHillName"
+                                   :data="hills"
+                                   :serializer="item => item.name"
+                                   @hit="tempHill = $event"
+                                   placeholder="Bergnamen eingeben zum Suchen"
+                                   @input="lookupHill" />
 
             <b-button :disabled="!tempHill.name || !tempHill.type" variant="success" @click="addHill"><i class="icofont-plus" /></b-button>
           </div>
@@ -121,19 +127,19 @@
 
             <GpxMap :gpx="newPost.gpxContent" v-if="newPost.gpxContent" />
 
-            <div class="text-center"><b-button :disabled="!newPost.gpxFile" @click="createProfiles" v-if="gpx.simplified"><i class="icofont-swoosh-down" /></b-button></div>
+            <div class="text-center"><b-button :disabled="!newPost.gpxFile" @click="createProfiles"><i class="icofont-swoosh-down" /></b-button></div>
 
             <b-row>
               <b-col cols="12" md="6">
                 <b-form-group label-for="elevation-profile" label="Höhenprofil">
-                  <b-form-file id="elevation-profile" v-model="newPost.elevationProfile" accept=".txt, .tsv" required :state="formState.elevationProfile" />
+                  <b-form-file id="elevation-profile" v-model="newPost.elevationProfile" accept=".txt, .tsv" :state="formState.elevationProfile" />
                 </b-form-group>
 
                 <ElevationProfile :sourceFile="newPost.elevationProfile" />
               </b-col>
               <b-col cols="12" md="6">
                 <b-form-group label-for="distance-time-profile" label="Zeit / Distanz">
-                  <b-form-file id="distance-time-profile" v-model="newPost.timeDistanceProfile" accept=".txt, .tsv" required :state="formState.timeDistanceProfile" />
+                  <b-form-file id="distance-time-profile" v-model="newPost.timeDistanceProfile" accept=".txt, .tsv" :state="formState.timeDistanceProfile" />
                 </b-form-group>
 
                 <TimeDistanceProfile :sourceFile="newPost.timeDistanceProfile" />
@@ -208,6 +214,9 @@ import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 import api from '@/mixins/api.js'
 import gpx from '@/mixins/gpx.js'
 
+import { debounce } from 'lodash'
+import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap'
+
 const emitter = require('tiny-emitter/instance')
 
 export default {
@@ -217,7 +226,8 @@ export default {
     GpxMap,
     Header,
     JsonModal,
-    TimeDistanceProfile
+    TimeDistanceProfile,
+    VueTypeaheadBootstrap
   },
   data: function () {
     return {
@@ -238,6 +248,8 @@ export default {
       },
       tempUrl: null,
       tempImage: null,
+      tempHillName: null,
+      hills: [],
       gpx: {
         simplified: null,
         originalLength: 0
@@ -305,6 +317,11 @@ export default {
   },
   mixins: [api, gpx],
   methods: {
+    lookupHill: debounce(function () {
+      this.apiGetHills(this.tempHillName, result => {
+        this.hills = result
+      })
+    }),
     updateHillLocation: function (location) {
       if (this.tempLocation && this.tempLocation.index !== null) {
         Vue.set(this.newPost.hills[this.tempLocation.index], 'latitude', location.latitude)
@@ -338,6 +355,8 @@ export default {
         points = this.gpxLoadPoints(this.newPost.gpxContent)
       }
 
+      const haveTimeData = points.filter(p => p.time !== undefined && p.time !== null).length > 0
+
       let elevationData = 'distance\televation\n'
       let timeDistanceData = 'time\tdistance\n'
       let elevationAccu = 0
@@ -361,7 +380,12 @@ export default {
       }
 
       this.newPost.elevationProfile = new File([elevationData], 'elevation-profile.tsv', { type: 'text/tab-separated-values' })
-      this.newPost.timeDistanceProfile = new File([timeDistanceData], 'time-distance-profile.tsv', { type: 'text/tab-separated-values' })
+
+      if (haveTimeData) {
+        this.newPost.timeDistanceProfile = new File([timeDistanceData], 'time-distance-profile.tsv', { type: 'text/tab-separated-values' })
+      } else {
+        this.newPost.timeDistanceProfile = null
+      }
     },
     simplifyGpx: function () {
       const points = this.gpxLoadPoints(this.newPost.gpxContent)
@@ -388,14 +412,14 @@ export default {
         videos: this.newPost.videos.map(v => this.isSet(v)).reduce((a, b) => a && b, true),
         hills: this.newPost.type === 'news' || (this.newPost.hills.map(h => this.isSet(h.type) && this.isSet(h.latitude) && this.isSet(h.longitude) && this.isSet(h.elevation) && this.isSet(h.name)).reduce((a, b) => a && b, true)),
         gpx: this.newPost.type === 'news' || this.isSet(this.newPost.gpxFile),
-        elevationProfile: this.newPost.type === 'news' || this.isSet(this.newPost.elevationProfile),
-        timeDistanceProfile: this.newPost.type === 'news' || this.isSet(this.newPost.timeDistanceProfile),
+        elevationProfile: true,
+        timeDistanceProfile: true,
         ratingWeather: this.newPost.type === 'news' || this.isSet(this.newPost.rating.weather),
         ratingPath: this.newPost.type === 'news' || this.isSet(this.newPost.rating.path),
         ratingView: this.newPost.type === 'news' || this.isSet(this.newPost.rating.view),
         statsDistance: this.newPost.type === 'news' || this.isSet(this.newPost.stats.distance),
         statsAscent: this.newPost.type === 'news' || this.isSet(this.newPost.stats.ascent),
-        statsDuration: this.newPost.type === 'news' || this.isSet(this.newPost.stats.duration)
+        statsDuration: true
       }
 
       const result = Object.keys(this.formState).map(k => this.formState[k]).reduce((a, b) => a && b, true)

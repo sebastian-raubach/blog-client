@@ -72,7 +72,7 @@
       <div class="pt-5" v-html="hike.content" />
 
       <b-carousel
-        v-if="hike.images"
+        v-if="hike.images && hike.images.length > 0"
         class="mt-5"
         :interval="0"
         controls

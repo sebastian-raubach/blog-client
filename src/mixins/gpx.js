@@ -61,7 +61,7 @@ export default {
       } else if (p.routes && p.routes.length > 0) {
         const route = p.routes[0]
         if (route.points && route.points.length > 0) {
-          points = [...points]
+          points = [...route.points]
         }
       }
 

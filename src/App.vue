@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="lg" sticky type="dark" id="header" :class="`header ${headerClass}`">
+    <b-navbar toggleable="md" sticky type="dark" id="header" :class="`header ${headerClass}`">
       <b-container>
         <h1 class="logo">
           <router-link class="scrollto" :to="{ name: 'home' }">
@@ -213,7 +213,7 @@ a:focus {
   height: 60px;
   position: fixed;
   width: 100%;
-  transition: background-color .5s linear;
+  transition: background-color .15s linear;
 }
 
 .header.header-scrolled {
@@ -404,25 +404,16 @@ hr {
 
 @media (max-width: 767.98px) {
   .navbar-collapse {
-    border-top: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-    width: 100%;
-    left: 0;
-    top: 60px;
-    position: absolute;
     background: rgba(49, 52, 58, 0.9);
-    z-index: 40;
   }
   .header.header-scrolled .main-nav .nav .nav-link.active {
     color: #0079ed;
     border: none;
   }
-  .main-nav .navbar-collapse .nav-item {
+  .navbar-collapse .nav-item {
     margin-right: 0;
   }
-  .main-nav .navbar-collapse .nav-item a {
+  .navbar-collapse .nav-item a {
     text-align: center;
   }
 }
@@ -431,7 +422,7 @@ hr {
 }
 
 @media (min-width: 992px) {
-  .main-nav .nav .nav-item {
+  .nav .nav-item {
     margin-right: 25px;
   }
 }

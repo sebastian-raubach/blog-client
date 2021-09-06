@@ -16,9 +16,19 @@ const routes = [
     component: () => import(/* webpackChunkName: "hikes" */ '@/views/Hikes.vue')
   },
   {
+    path: '/hike/:year',
+    name: 'hikes-year',
+    component: () => import(/* webpackChunkName: "hikes-year" */ '@/views/Hikes.vue')
+  },
+  {
     path: '/hike/:hikeId',
     name: 'hike-details',
     component: () => import(/* webpackChunkName: "hike-details" */ '@/views/HikeDetails.vue')
+  },
+  {
+    path: '/hills',
+    name: 'hills',
+    component: () => import(/* webpackChunkName: "hills" */ '@/views/Hills.vue')
   },
   {
     path: '/post-editor',

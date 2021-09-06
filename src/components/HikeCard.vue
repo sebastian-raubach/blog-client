@@ -1,6 +1,6 @@
 <template>
   <div class="hike-card">
-    <b-img :src="`${storeBaseUrl}image/${getPrimaryImage(hike.images).imageId}/small`" />
+    <b-img :src="`${storeBaseUrl}image/${getPrimaryImage(hike.images).imageId}/small`" v-if="hike.images && hike.images.length > 0" />
     <div class="overlay" />
     <div class="hike-details">
       <div class="hike-name text-primary">{{ hike.title }}</div>
@@ -80,11 +80,15 @@ export default {
   left: 0;
 }
 
+.hike-card {
+  height: 450px;
+}
+
 .hike-card img {
   transition: all 0.15s linear;
   object-fit: cover;
   max-width: 100%;
-  height: 450px;
+  height: 100%;
 }
 
 .hike-card .hike-details {
