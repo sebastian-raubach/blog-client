@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="lg" fixed type="dark" id="header" :class="`header ${headerClass}`">
+    <b-navbar toggleable="lg" sticky type="dark" id="header" :class="`header ${headerClass}`">
       <b-container>
         <h1 class="logo">
           <router-link class="scrollto" :to="{ name: 'home' }">
@@ -211,6 +211,8 @@ a:focus {
 .header {
   background-color: transparent;
   height: 60px;
+  position: fixed;
+  width: 100%;
   transition: background-color .5s linear;
 }
 
