@@ -307,9 +307,9 @@ export default {
   methods: {
     updateHillLocation: function (location) {
       if (this.tempLocation && this.tempLocation.index !== null) {
-        Vue.set(this.newPost.hills[this.tempLocation.index]), 'latitude', location.latitude)
-        Vue.set(this.newPost.hills[this.tempLocation.index]), 'longitude', location.longitude)
-        Vue.set(this.newPost.hills[this.tempLocation.index]), 'elevation', location.elevation)
+        Vue.set(this.newPost.hills[this.tempLocation.index], 'latitude', location.latitude)
+        Vue.set(this.newPost.hills[this.tempLocation.index], 'longitude', location.longitude)
+        Vue.set(this.newPost.hills[this.tempLocation.index], 'elevation', location.elevation)
       }
     },
     selectLocation: function (index) {
