@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="lg" type="dark" id="header" :class="`header ${headerClass}`">
+    <b-navbar toggleable="lg" fixed type="dark" id="header" :class="`header ${headerClass}`">
       <b-container>
         <h1 class="logo">
           <router-link class="scrollto" :to="{ name: 'home' }">
@@ -21,33 +21,6 @@
         </b-collapse>
       </b-container>
     </b-navbar>
-
-    <!-- <header id="header" :class="`header ${headerClass}`">
-      <b-container>
-        <h1 class="logo">
-          <router-link class="scrollto" :to="{ name: 'home' }">
-            <span class="logo-icon-wrapper"><img class="logo-icon" src="@/assets/logo-small.svg" alt="icon"></span>
-            <span class="text"><span class="highlight">MIRI</span>&amp;<span class="highlight">BAZ</span></span>
-          </router-link>
-        </h1>
-        <nav class="main-nav navbar-expand-md float-right navbar-inverse" role="navigation">
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-
-          <div id="navbar-collapse" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li class="nav-item"><router-link :to="{ name: 'home' }" class="nav-link">Home</router-link></li>
-              <li class="nav-item"><router-link :to="{ name: 'news' }" class="nav-link">Neuigkeiten</router-link></li>
-              <li class="nav-item"><router-link :to="{ name: 'hikes' }" class="nav-link">Wandern</router-link></li>
-            </ul>
-          </div>
-        </nav>
-      </b-container>
-    </header> -->
 
     <router-view/>
 
@@ -236,19 +209,13 @@ a:focus {
 }
 
 .header {
-  position: fixed;
-  background: transparent;
-  width: 100%;
-  z-index: 30;
+  background-color: transparent;
   height: 60px;
-  -webkit-transition: none;
-  -moz-transition: none;
-  -ms-transition: none;
-  -o-transition: none;
+  transition: background-color .5s linear;
 }
 
 .header.header-scrolled {
-  background: #222629;
+  background-color: #222629;
   -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);

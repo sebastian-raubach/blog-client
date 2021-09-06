@@ -196,6 +196,8 @@
 </template>
 
 <script>
+import Vue from 'vue'
+
 import ElevationProfile from '@/components/charts/ElevationProfile'
 import GpsSelectorModal from '@/components/modals/GpsSelectorModal'
 import GpxMap from '@/components/GpxMap'
@@ -305,9 +307,9 @@ export default {
   methods: {
     updateHillLocation: function (location) {
       if (this.tempLocation && this.tempLocation.index !== null) {
-        this.newPost.hills[this.tempLocation.index].latitude = location.latitude
-        this.newPost.hills[this.tempLocation.index].longitude = location.longitude
-        this.newPost.hills[this.tempLocation.index].elevation = location.elevation
+        Vue.set(this.newPost.hills[this.tempLocation.index]), 'latitude', location.latitude)
+        Vue.set(this.newPost.hills[this.tempLocation.index]), 'longitude', location.longitude)
+        Vue.set(this.newPost.hills[this.tempLocation.index]), 'elevation', location.elevation)
       }
     },
     selectLocation: function (index) {
@@ -538,7 +540,7 @@ export default {
       }
     },
     setFromJson: function (container, field, json, jsonField) {
-      if (json[jsonField]) {
+      if (json && json[jsonField]) {
         container[field] = json[jsonField]
       }
     }
