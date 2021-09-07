@@ -16,7 +16,7 @@
           </b-col>
           <b-col cols="4">
             <h3><i class="icofont-chart-growth" /></h3>
-            <p>{{ hike.stats.ascent }}<br/>m</p>
+            <p v-if="hike.stats.ascent">{{ hike.stats.ascent.toFixed(0) }}<br/>m</p>
           </b-col>
           <b-col cols="4">
             <h3><i class="icofont-ruler" /></h3>
