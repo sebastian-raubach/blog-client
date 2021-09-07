@@ -9,7 +9,7 @@ export default {
      * @param {String} method (Optional) REST method (default: `'get'`)
      * @returns Promise
      */
-    axios: function ({ url = null, params = null, method = 'get', dataType = 'json', contentType = 'application/json; charset=utf-8', success = null, error = null }) {
+    axios: function ({ url = null, params = null, method = 'get', dataType = 'json', contentType = 'application/json; charset=utf-8', useAuth = true, success = null, error = null }) {
       let requestData = null
       let requestParams = null
 
@@ -22,6 +22,15 @@ export default {
         }
       }
 
+      const headers = {
+        'Content-Type': contentType,
+        Authorization: 'Bearer ' + this.getToken()
+      }
+
+      if (!useAuth) {
+        delete headers.Authorization
+      }
+
       const promise = axios({
         url: url,
         params: requestParams,
@@ -29,10 +38,7 @@ export default {
         method: method,
         crossDomain: true,
         responseType: dataType,
-        headers: {
-          'Content-Type': contentType,
-          Authorization: 'Bearer ' + this.getToken()
-        }
+        headers: headers
       })
 
       promise.then(result => {
@@ -131,6 +137,9 @@ export default {
     },
     apiGetHills: function (name, onSuccess, onError) {
       return this.axios({ url: 'hill', params: { name: name }, success: onSuccess, error: onError })
+    },
+    elevationApiPostLocations: function (points, onSuccess, onError) {
+      return this.axios({ url: 'https://api.open-elevation.com/api/v1/lookup', useAuth: false, params: { locations: points }, method: 'post', success: onSuccess, error: onError })
     },
     /**
      * Returns the current authentication token

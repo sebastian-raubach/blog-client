@@ -127,8 +127,6 @@
 
             <GpxMap :gpx="newPost.gpxContent" v-if="newPost.gpxContent" />
 
-            <div class="text-center"><b-button :disabled="!newPost.gpxFile" @click="createProfiles"><i class="icofont-swoosh-down" /></b-button></div>
-
             <b-row>
               <b-col cols="12" md="6">
                 <b-form-group label-for="elevation-profile" label="Höhenprofil">
@@ -346,52 +344,10 @@ export default {
         originalLength: 0
       }
     },
-    createProfiles: function () {
-      let points
-
-      if (this.gpx && this.gpx.simplified) {
-        points = this.gpx.simplified.concat()
-      } else {
-        points = this.gpxLoadPoints(this.newPost.gpxContent)
-      }
-
-      const haveTimeData = points.filter(p => p.time !== undefined && p.time !== null).length > 0
-
-      let elevationData = 'distance\televation\n'
-      let timeDistanceData = 'time\tdistance\n'
-      let elevationAccu = 0
-      let timeDistanceAccu = 0
-
-      const start = points[0]
-      let lastTime = -1
-
-      for (let i = 1; i < points.length; i++) {
-        const haversine = this.gpxHaversine(points[i - 1], points[i])
-        elevationAccu += haversine
-        elevationData += `${elevationAccu}\t${points[i].ele}\n`
-
-        timeDistanceAccu += haversine
-        const time = Math.floor((Math.abs(points[i].time - start.time) / 1000) / 60)
-
-        if (time > lastTime) {
-          lastTime = time
-          timeDistanceData += `${time}\t${timeDistanceAccu}\n`
-        }
-      }
-
-      this.newPost.elevationProfile = new File([elevationData], 'elevation-profile.tsv', { type: 'text/tab-separated-values' })
-
-      if (haveTimeData) {
-        this.newPost.timeDistanceProfile = new File([timeDistanceData], 'time-distance-profile.tsv', { type: 'text/tab-separated-values' })
-      } else {
-        this.newPost.timeDistanceProfile = null
-      }
-    },
     simplifyGpx: function () {
       const points = this.gpxLoadPoints(this.newPost.gpxContent)
       this.gpx.originalLength = points.length
       this.gpx.simplified = this.gpxSimplify(points, 0.00005)
-
       const simplifiedContent = this.gpxPointsToGpx(this.gpx.simplified)
       this.newPost.gpxFile = new File([simplifiedContent], 'simplified-gpx.gpx', { type: 'application/gpx+xml' })
     },
