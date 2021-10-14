@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="md" sticky type="dark" id="header" :class="`header ${headerClass}`">
+    <b-navbar toggleable="md" sticky type="dark" id="header" :class="`header ${isScrolled ? 'header-scrolled' : null}`">
       <b-container>
         <h1 class="logo">
           <router-link class="scrollto" :to="{ name: 'home' }">
@@ -15,20 +15,25 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
             <b-nav-item :to="{ name: 'home' }">Home</b-nav-item>
-            <b-nav-item :to="{ name: 'news' }">Neuigkeiten</b-nav-item>
+            <b-nav-item :to="{ name: 'posts' }">Neuigkeiten</b-nav-item>
+            <b-nav-item :to="{ name: 'stories' }">Stories</b-nav-item>
             <b-nav-item :to="{ name: 'hikes' }">Wandern</b-nav-item>
+            <b-nav-item-dropdown right variant="dark" text="Admin" v-if="storeToken">
+              <b-dropdown-item variant="dark" :to="{ name: 'post-editor' }">Neuer Beitrag</b-dropdown-item>
+              <b-dropdown-item variant="dark" :to="{ name: 'story-editor' }">Neue Story</b-dropdown-item>
+            </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
       </b-container>
     </b-navbar>
 
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
 
     <footer class="footer text-center">
       <div class="container">
         <div><small class="copyright">Inhalt und Bilder von Miriam Schreiber und Sebastian Raubach</small></div>
         <!--/* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */-->
-        <div><small class="copyright">Designed with <i class="icofont-heart footer-icon" /> by <a href="https://themes.3rdwavemedia.com/" target="_blank">Xiaoying Riley</a> for developers</small></div>
+        <div><small class="copyright">Template designed with <i class="icofont-heart footer-icon" /> by <a href="https://themes.3rdwavemedia.com/" target="_blank">Xiaoying Riley</a> for developers</small></div>
         <hr />
         <div>
           <small class="copyright">
@@ -63,14 +68,18 @@ export default {
   data: function () {
     return {
       headerClass: '',
-      loading: false
+      loading: false,
+      scrollY: 0
     }
   },
   computed: {
     /** Mapgetters exposing the store configuration */
     ...mapGetters([
       'storeToken'
-    ])
+    ]),
+    isScrolled: function () {
+      return this.scrollY > 0
+    }
   },
   methods: {
     logout: function () {
@@ -78,11 +87,7 @@ export default {
       this.$router.push({ name: 'home' })
     },
     onScrollResize: function () {
-      if (window.scrollY > 0) {
-        this.headerClass = 'header-scrolled'
-      } else {
-        this.headerClass = ''
-      }
+      this.scrollY = window.scrollY
     },
     setLoading: function (visible) {
       this.loading = visible

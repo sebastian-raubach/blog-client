@@ -1,26 +1,26 @@
 <template>
-  <div class="hikes">
+  <div :class="`posts ${type}`" >
     <div class="overlay">
-      <b-container class="hikes-wrapper">
-        <h2 class="section-title text-center">Neueste Wanderungen</h2>
+      <b-container class="posts-wrapper">
+        <h2 class="section-title text-center">{{ type === 'hike' ? 'Neueste Wanderungen' : 'Neueste Berichte' }}</h2>
 
-        <div class="item mx-auto" v-for="hike in hikes" :key="`hike-${hike.id}`">
-          <div class="image-holder" v-if="hike.images && hike.images.length > 0">
-            <img class="image rounded-circle" :src="`${storeBaseUrl}image/${getPrimaryImage(hike.images).imageId}/small`" />
+        <div class="item mx-auto" v-for="post in posts" :key="`post-${post.id}`">
+          <div class="image-holder" v-if="post.images && post.images.length > 0">
+            <img class="image rounded-circle" :src="`${storeBaseUrl}image/${getPrimaryImage(post.images).imageId}/small`" />
           </div>
           <div class="content-holder">
-            <router-link class="no-link" :to="{ name: 'hike-details', params: { hikeId: hike.id } }">
+            <router-link class="no-link" :to="post.type === 'hike' ? { name: 'hike-details', params: { hikeId: post.id } } : { name: 'post-details', params: { postId: post.id } }">
               <div class="content">
                 <b-row>
                   <b-col>
-                    <h5 class="text-primary">{{ hike.title }}</h5>
+                    <h5 class="text-primary">{{ post.title }}</h5>
                   </b-col>
                   <b-col>
-                    <h6 class="text-muted text-right">{{ hike.createdOn | toDate }}</h6>
+                    <h6 class="text-muted text-right">{{ post.createdOn | toDate }}</h6>
                   </b-col>
                 </b-row>
-                <div v-if="hike.hills"><b-badge class="mr-2 my-2" v-for="hill in hike.hills" variant="light" :key="`hill${hike.id}-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
-                <div class="description" v-html="hike.content" />
+                <div v-if="post.hills"><b-badge class="mr-2 my-2" v-for="hill in post.hills" variant="light" :key="`hill-${post.id}-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
+                <div class="description" v-html="post.content" />
               </div>
             </router-link>
           </div>
@@ -35,7 +35,11 @@ import { mapGetters } from 'vuex'
 
 export default {
   props: {
-    hikes: {
+    type: {
+      type: String,
+      default: 'hike'
+    },
+    posts: {
       type: Array,
       default: () => []
     }
@@ -64,8 +68,14 @@ export default {
 </script>
 
 <style scoped>
-.hikes {
+.posts.hike {
   background: #0079ed url("~@/assets/parallax-skye.jpg") no-repeat center center;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: 50% 90%;
+}
+.posts.post {
+  background: #0079ed url("~@/assets/banner-news.jpg") no-repeat center center;
   background-attachment: fixed;
   background-size: cover;
   background-position: 50% 90%;
@@ -75,12 +85,12 @@ export default {
   width: 100%;
   height: 100%;
 }
-.hikes-wrapper {
+.posts-wrapper {
   padding-top: 90px;
   padding-bottom: 90px;
 }
 
-.hikes .section-title {
+.posts .section-title {
   margin: 0;
   margin-bottom: 30px;
   font-size: 36px;
@@ -88,7 +98,7 @@ export default {
   color: #fff;
 }
 
-.hikes .item {
+.posts .item {
   position: relative;
   max-width: 800px;
   padding: 30px;
@@ -153,6 +163,10 @@ export default {
   overflow: hidden;
   max-height: 4.5em;
   line-height: 1.5em;
+  text-align: justify;
+}
+.content:after {
+  content: "...";
 }
 @media (min-width: 576px) {
   .image {

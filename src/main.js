@@ -81,7 +81,9 @@ Vue.filter('toDate', value => {
     return null
   }
   let result
-  if (value.indexOf('-') !== -1) {
+  if ((typeof value) === 'number') {
+    result = moment(value)
+  } else if (value.indexOf('-') !== -1) {
     result = moment(value)
   } else {
     result = moment(value, 'MMM D, YYYY')

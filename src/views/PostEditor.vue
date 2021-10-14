@@ -191,7 +191,7 @@
             </b-row>
           </div>
         </template>
-        <b-button type="submit" variant="primary">Upload</b-button>
+        <b-button type="submit" variant="primary">Erstellen</b-button>
       </b-form>
     </b-container>
     <JsonModal @json-loaded="onJsonLoaded" ref="jsonModal" />
@@ -427,7 +427,11 @@ export default {
       }
 
       this.apiPostPostMedia(postId, formData, result => {
-        this.$router.push({ name: 'hike-details', params: { hikeId: postId } })
+        if (this.newPost.type === 'news') {
+          this.$router.push({ name: 'post-details', params: { postId: postId } })
+        } else {
+          this.$router.push({ name: 'hike-details', params: { hikeId: postId } })
+        }
         emitter.emit('set-loading', false)
       }, error => {
         emitter.emit('set-loading', false)

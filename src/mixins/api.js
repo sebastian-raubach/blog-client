@@ -108,11 +108,17 @@ export default {
     apiGetHike: function (hikeId, onSuccess, onError) {
       return this.axios({ url: `hike/${hikeId}`, success: onSuccess, error: onError })
     },
+    apiGetPost: function (postId, onSuccess, onError) {
+      return this.axios({ url: `post/${postId}`, success: onSuccess, error: onError })
+    },
+    apiGetStory: function (storyId, onSuccess, onError) {
+      return this.axios({ url: `story/${storyId}`, success: onSuccess, error: onError })
+    },
     apiPostToken: function (data, onSuccess, onError) {
       return this.axios({ url: 'token', method: 'post', params: data, success: onSuccess, error: onError })
     },
     apiPutPost: function (data, onSuccess, onError) {
-      return this.axios({ url: 'post/import', method: 'put', params: data, success: onSuccess, error: onError })
+      return this.axios({ url: 'import/post', method: 'put', params: data, success: onSuccess, error: onError })
     },
     apiPostPostMedia: function (postId, formData, onSuccess, onError) {
       return this.axios({ url: `post/media/${postId}`, method: 'post', contentType: 'multipart/form-data', params: formData, success: onSuccess, error: onError })
@@ -129,17 +135,29 @@ export default {
     apiGetHikeYears: function (onSuccess, onError) {
       return this.axios({ url: 'hike/years', success: onSuccess, error: onError })
     },
+    apiGetPostYears: function (onSuccess, onError) {
+      return this.axios({ url: 'post/years', success: onSuccess, error: onError })
+    },
     apiGetHillTypes: function (onSuccess, onError) {
       return this.axios({ url: 'hill/types', success: onSuccess, error: onError })
     },
     apiGetHikesForYear: function (year, onSuccess, onError) {
       return this.axios({ url: 'hike', params: { year: year }, success: onSuccess, error: onError })
     },
+    apiGetPostsForYear: function (year, onSuccess, onError) {
+      return this.axios({ url: 'post', params: { year: year }, success: onSuccess, error: onError })
+    },
     apiGetHills: function (name, onSuccess, onError) {
       return this.axios({ url: 'hill', params: { name: name }, success: onSuccess, error: onError })
     },
-    elevationApiPostLocations: function (points, onSuccess, onError) {
-      return this.axios({ url: 'https://api.open-elevation.com/api/v1/lookup', useAuth: false, params: { locations: points }, method: 'post', success: onSuccess, error: onError })
+    apiPutStory: function (data, onSuccess, onError) {
+      return this.axios({ url: 'import/story', method: 'put', params: data, success: onSuccess, error: onError })
+    },
+    apiPutStoryPosts: function (storyId, data, onSuccess, onError) {
+      return this.axios({ url: `import/story/${storyId}/post`, method: 'put', params: data, success: onSuccess, error: onError })
+    },
+    apiPostStoryList: function (data, onSuccess, onError) {
+      return this.axios({ url: 'story', method: 'post', params: data, success: onSuccess, error: onError })
     },
     /**
      * Returns the current authentication token

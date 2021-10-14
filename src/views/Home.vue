@@ -8,7 +8,7 @@
         <p class="intro">Diese Webseite gibt es aus zwei Gründen: Zum einen möchten wir Leute auf dem Laufenden halten die noch Interesse daran haben was bei uns so los ist und zum anderen ist diese Seite auch eine schöne Ansammlung an Erinnerungen für unse selber.</p>
 
         <b-row class="items-wrapper">
-          <b-col cols="12" md="4" class="item">
+          <b-col cols="12" md="6" class="item">
             <div class="item-inner">
               <div class="figure-holder">
                 <img class="figure-image" src="@/assets/category-hiking.svg" alt="image">
@@ -20,7 +20,7 @@
               <b-button variant="primary" :to="{ name: 'hikes' }">Los geht's</b-button>
             </div>
           </b-col>
-          <b-col cols="12" md="4" class="item">
+          <b-col cols="12" md="6" class="item">
             <div class="item-inner">
               <div class="figure-holder">
                 <img class="figure-image" src="@/assets/category-news.svg" alt="image">
@@ -31,7 +31,7 @@
               <b-button variant="primary" :to="{ name: 'news' }">Los geht's</b-button>
             </div>
           </b-col>
-          <b-col cols="12" md="4" class="item">
+          <!-- <b-col cols="12" md="4" class="item">
             <div class="item-inner">
               <div class="figure-holder">
                 <img class="figure-image" src="@/assets/category-stuff.svg" alt="image">
@@ -41,25 +41,27 @@
                 Alles was nicht woanders rein gepasst hat wurde hier sicher verstaut. Das ein oder andere Interessante ist bestimmt zu finden.</div>
               <b-button variant="primary" :to="{ name: 'misc' }">Los geht's</b-button>
             </div>
-          </b-col>
+          </b-col> -->
         </b-row>
       </b-container>
 
-      <LatestHikes :hikes="hikes" />
+      <LatestPosts type="post" :posts="posts" />
+
+      <LatestPosts type="hike" :posts="hikes" />
     </div>
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header'
-import LatestHikes from '@/components/LatestHikes'
+import LatestPosts from '@/components/LatestPosts'
 
 import api from '@/mixins/api.js'
 
 export default {
   components: {
     Header,
-    LatestHikes
+    LatestPosts
   },
   data: function () {
     return {
@@ -67,7 +69,8 @@ export default {
       message: 'Wir laden hier (halbwegs) regelmäßig Updates von uns hoch.',
       image: 'logo.svg', // 'banner.jpg',
       backgroundImage: 'banner.jpg',
-      hikes: null
+      hikes: null,
+      posts: null
     }
   },
   mixins: [api],
@@ -79,6 +82,14 @@ export default {
       ascending: 0
     }, result => {
       this.hikes = result
+    })
+    this.apiPostPostList({
+      page: 0,
+      limit: 5,
+      orderBy: 'createdOn',
+      ascending: 0
+    }, result => {
+      this.posts = result
     })
   }
 }

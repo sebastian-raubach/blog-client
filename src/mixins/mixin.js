@@ -1,6 +1,7 @@
 export default {
   data: function () {
     return {
+      MAX_JAVA_INTEGER: 2147483647,
       hillTypes: {
         munro: {
           name: 'Munro',

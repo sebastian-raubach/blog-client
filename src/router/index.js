@@ -21,9 +21,34 @@ const routes = [
     component: () => import(/* webpackChunkName: "hikes-year" */ '@/views/Hikes.vue')
   },
   {
+    path: '/post',
+    name: 'posts',
+    component: () => import(/* webpackChunkName: "posts" */ '@/views/Posts.vue')
+  },
+  {
+    path: '/post/:year',
+    name: 'posts-year',
+    component: () => import(/* webpackChunkName: "posts-year" */ '@/views/Posts.vue')
+  },
+  {
+    path: '/story',
+    name: 'stories',
+    component: () => import(/* webpackChunkName: "stories" */ '@/views/Stories.vue')
+  },
+  {
+    path: '/story-details/:storyId',
+    name: 'story-details',
+    component: () => import(/* webpackChunkName: "story-details" */ '@/views/StoryDetails.vue')
+  },
+  {
     path: '/hike-details/:hikeId',
     name: 'hike-details',
-    component: () => import(/* webpackChunkName: "hike-details" */ '@/views/HikeDetails.vue')
+    component: () => import(/* webpackChunkName: "hike-details" */ '@/views/PostDetails.vue')
+  },
+  {
+    path: '/post-details/:postId',
+    name: 'post-details',
+    component: () => import(/* webpackChunkName: "post-details" */ '@/views/PostDetails.vue')
   },
   {
     path: '/hills',
@@ -34,6 +59,12 @@ const routes = [
     path: '/post-editor',
     name: 'post-editor',
     component: () => import(/* webpackChunkName: "post-editor" */ '@/views/PostEditor.vue'),
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/story-editor',
+    name: 'story-editor',
+    component: () => import(/* webpackChunkName: "story-editor" */ '@/views/StoryEditor.vue'),
     beforeEnter: requireAuth
   },
   {

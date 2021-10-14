@@ -1,23 +1,23 @@
 <template>
-  <div v-if="hike">
-    <Header :title="hike.title" :message="null" :image="null" :backgroundImage="backgroundImage" :height="400">
-      <b-row slot="content" v-if="hike.ratings" class="ratings">
+  <div v-if="post">
+    <Header :title="post.title" :message="null" :image="null" :backgroundImage="backgroundImage" :height="400">
+      <b-row slot="content" v-if="post.ratings" class="ratings">
         <b-col cols="12" md="4">
           <b-card class="mb-4">
             <b-card-title class="text-center text-light">Wetter</b-card-title>
-            <b-card-text><b-form-rating variant="warning" size="lg" v-model="hike.ratings.weather" readonly no-border /></b-card-text>
+            <b-card-text><b-form-rating variant="warning" size="lg" v-model="post.ratings.weather" readonly no-border /></b-card-text>
           </b-card>
         </b-col>
         <b-col cols="12" md="4">
           <b-card class="mb-4">
             <b-card-title class="text-center text-light">Aussicht</b-card-title>
-            <b-card-text><b-form-rating variant="warning" size="lg" v-model="hike.ratings.view" readonly no-border /></b-card-text>
+            <b-card-text><b-form-rating variant="warning" size="lg" v-model="post.ratings.view" readonly no-border /></b-card-text>
           </b-card>
         </b-col>
         <b-col cols="12" md="4">
           <b-card class="mb-4">
             <b-card-title class="text-center text-light">Strecke</b-card-title>
-            <b-card-text><b-form-rating variant="warning" size="lg" v-model="hike.ratings.path" readonly no-border /></b-card-text>
+            <b-card-text><b-form-rating variant="warning" size="lg" v-model="post.ratings.path" readonly no-border /></b-card-text>
           </b-card>
         </b-col>
       </b-row>
@@ -26,15 +26,15 @@
     <b-container>
       <b-row class="pt-5">
         <b-col cols="12" md="6">
-          <h2><i class="icofont-ui-calendar" /> {{ hike.createdOn | toDate }}</h2>
+          <h2><i class="icofont-ui-calendar" /> {{ post.createdOn | toDate }}</h2>
         </b-col>
         <b-col cols="12" md="6">
-          <h2 class="text-md-right" v-if="hike.hills"><i class="icofont-hill" /> <b-badge class="mx-2" v-for="hill in hike.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></h2>
+          <h2 class="text-md-right" v-if="post.hills"><i class="icofont-hill" /> <b-badge class="mx-2" v-for="hill in post.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></h2>
         </b-col>
       </b-row>
 
-      <b-row class="pt-5" v-if="hike.hills">
-        <b-col cols="12" md="4" v-for="hill in hike.hills" :key="`hill-card-${hill.id}`" class="hike-stats">
+      <b-row class="pt-5" v-if="post.hills">
+        <b-col cols="12" md="4" v-for="hill in post.hills" :key="`hill-card-${hill.id}`" class="post-stats">
           <b-card no-body class="hill mb-4">
             <b-card-body>
               <b-card-title class="text-light">{{ hill.name }}</b-card-title>
@@ -69,10 +69,10 @@
         </b-col>
       </b-row>
 
-      <div class="pt-5" v-html="hike.content" />
+      <div class="pt-5" v-html="post.content" />
 
       <b-carousel
-        v-if="hike.images && hike.images.length > 0"
+        v-if="post.images && post.images.length > 0"
         class="mt-5"
         :interval="0"
         controls
@@ -80,7 +80,7 @@
         indicators>
         <a :href="`${storeBaseUrl}image/${image.imageId}/large`"
            @click.prevent="coolboxIndex = index"
-           v-for="(image, index) in hike.images"
+           v-for="(image, index) in post.images"
            :key="`carousel-slide-${image.imageId}`"
            :data-caption="image.description">
           <b-carousel-slide
@@ -93,11 +93,11 @@
         </a>
       </b-carousel>
 
-      <div v-if="hike.videos && hike.videos.length > 0" class="pt-5">
-        <b-embed v-for="(video, index) in hike.videos" :key="`video-${index}`" type="iframe" aspect="16by9" class="my-2" :src="video.videoPath" allowfullscreen/>
+      <div v-if="post.videos && post.videos.length > 0" class="pt-5">
+        <b-embed v-for="(video, index) in post.videos" :key="`video-${index}`" type="iframe" aspect="16by9" class="my-2" :src="video.videoPath" allowfullscreen/>
       </div>
 
-      <GpxMap class="pt-5" v-if="gpxContent" :gpx="gpxContent" :additionalMarkers="hike.hills" />
+      <GpxMap class="pt-5" v-if="gpxContent" :gpx="gpxContent" :additionalMarkers="post.hills" />
 
       <div class="pt-5">
         <ElevationProfile :sourceFile="evProfileContent" v-if="evProfileContent" />
@@ -137,7 +137,7 @@ export default {
   },
   data: function () {
     return {
-      hike: null,
+      post: null,
       gpxContent: null,
       tdProfileContent: null,
       evProfileContent: null,
@@ -149,10 +149,10 @@ export default {
       'storeBaseUrl'
     ]),
     coolboxImages: function () {
-      if (!this.hike || !this.hike.images || this.hike.images.length < 1) {
+      if (!this.post || !this.post.images || this.post.images.length < 1) {
         return []
       } else {
-        return this.hike.images.map(i => {
+        return this.post.images.map(i => {
           return {
             src: `${this.storeBaseUrl}image/${i.imageId}/large`,
             title: i.description
@@ -161,13 +161,13 @@ export default {
       }
     },
     backgroundImage: function () {
-      if (!this.hike || !this.hike.images || this.hike.images.length < 1) {
+      if (!this.post || !this.post.images || this.post.images.length < 1) {
         return null
       } else {
-        let primary = this.hike.images.find(i => i.isPrimary)
+        let primary = this.post.images.find(i => i.isPrimary)
 
         if (!primary) {
-          primary = this.hike.imafges[0]
+          primary = this.post.images[0]
         }
 
         return `${this.storeBaseUrl}image/${primary.imageId}/large`
@@ -175,31 +175,43 @@ export default {
     }
   },
   watch: {
-    hike: function (newValue) {
-      this.apiGetGpx(newValue.id, result => {
-        const reader = new FileReader()
-        reader.readAsText(result)
-        reader.onload = () => {
-          this.gpxContent = reader.result
-        }
-      })
+    post: function (newValue) {
+      if (newValue.type === 'hike') {
+        this.apiGetGpx(newValue.id, result => {
+          const reader = new FileReader()
+          reader.readAsText(result)
+          reader.onload = () => {
+            this.gpxContent = reader.result
+          }
+        })
 
-      this.apiGetTimeDistanceProfile(newValue.id, result => {
-        this.tdProfileContent = result
-      })
-      this.apiGetElevationProfile(newValue.id, result => {
-        this.evProfileContent = result
-      })
+        this.apiGetTimeDistanceProfile(newValue.id, result => {
+          this.tdProfileContent = result
+        })
+        this.apiGetElevationProfile(newValue.id, result => {
+          this.evProfileContent = result
+        })
+      } else {
+        this.gpxContent = null
+        this.tdProfileContent = null
+        this.evProfileContent = null
+      }
     }
   },
   mixins: [api],
   created: function () {
-    const hikeId = this.$route.params.hikeId
+    const postId = this.$route.params.postId || this.$route.params.hikeId
 
-    if (hikeId) {
-      this.apiGetHike(hikeId, result => {
-        this.hike = result
-      })
+    if (postId) {
+      if (this.$route.name === 'hike-details') {
+        this.apiGetHike(postId, result => {
+          this.post = result
+        })
+      } else {
+        this.apiGetPost(postId, result => {
+          this.post = result
+        })
+      }
     }
   }
 }

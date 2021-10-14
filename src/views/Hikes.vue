@@ -32,7 +32,7 @@
       <b-row>
         <b-col cols="12" md="6" lg="4" v-for="hike in hikes" :key="`hike-card-${hike.id}`">
           <router-link class="no-link" :to="{ name: 'hike-details', params: { hikeId: hike.id } }">
-            <HikeCard :hike="hike" />
+            <PostCard :post="hike" />
           </router-link>
         </b-col>
       </b-row>
@@ -42,14 +42,14 @@
 
 <script>
 import Header from '@/components/Header'
-import HikeCard from '@/components/HikeCard'
+import PostCard from '@/components/PostCard'
 
 import api from '@/mixins/api.js'
 
 export default {
   components: {
     Header,
-    HikeCard
+    PostCard
   },
   data: function () {
     return {
@@ -99,7 +99,7 @@ export default {
       this.hikeYearOptions = result.map(y => {
         return {
           value: y.year,
-          text: `${y.year} - ${y.count} Wanderungen`
+          text: `${y.year} - ${y.count} ${y.count > 1 ? 'Wanderungen' : 'Wanderung'}`
         }
       })
       if (!this.year) {
