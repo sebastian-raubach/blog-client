@@ -1,8 +1,6 @@
-FROM node:12-alpine3.10 AS build
+FROM node:12-alpine3.10 AS builder
 
 LABEL maintainer="sebastian@raubach.co.uk"
-
-COPY qemu-arm-static /usr/bin/qemu-arm-static
 
 ARG BRANCH=master
 
@@ -33,15 +31,13 @@ RUN apk add --no-cache openjdk11 && \
     /opt/gradle-6.0.1/bin/gradle -p /opt/blog-server war
 
 
-FROM arm64v8/tomcat:8-jdk11
+FROM tomcat:8-jdk11
 
 LABEL maintainer="sebastian.raubach@hutton.ac.uk"
-
-COPY qemu-arm-static /usr/bin/qemu-arm-static
 
 RUN mkdir -p /usr/local/tomcat/webapps && \
     rm -rf /usr/local/tomcat/webapps/ROOT
 
-COPY --from=build /opt/blog-server/build/libs/blog-*.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=builder /opt/blog-server/build/libs/blog-*.war /usr/local/tomcat/webapps/ROOT.war
 
 WORKDIR /usr/local/tomcat/
