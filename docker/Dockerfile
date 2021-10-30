@@ -9,7 +9,7 @@ ADD https://api.github.com/repos/sebastian-raubach/blog-client/git/refs/heads/ma
 # Clone the Blog server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
 RUN apk add --no-cache git && \
-    if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-server.git /opt/blog-server ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-server.git /opt/blog-server ; fi && \
+    git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-server.git /opt/blog-server && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-client.git /opt/blog-client
 
 # Build the client code
