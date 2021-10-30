@@ -2,7 +2,7 @@ FROM node:12-alpine3.10 AS builder
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
-ARG BRANCH=master
+ARG BRANCH=main
 
 # Force docker to not cache the next line
 ADD https://api.github.com/repos/sebastian-raubach/blog-client/git/refs/heads/main version.json
