@@ -9,7 +9,7 @@
             <img class="image rounded-circle" :src="`${storeBaseUrl}image/${getPrimaryImage(post.images).imageId}/small`" />
           </div>
           <div class="content-holder">
-            <router-link class="no-link" :to="post.type === 'hike' ? { name: 'hike-details', params: { hikeId: post.id } } : { name: 'post-details', params: { postId: post.id } }">
+            <router-link class="no-link" :to="{ name: 'post-details', params: { postId: post.id } }">
               <div class="content">
                 <b-row>
                   <b-col>

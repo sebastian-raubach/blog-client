@@ -9,10 +9,7 @@
 
       <b-row>
         <b-col cols="12" md="6" lg="4" v-for="post in story.posts" :key="`post-card-${post.id}`">
-          <router-link class="no-link" :to="{ name: 'hike-details', params: { hikeId: post.id } }" v-if="post.type === 'hike'">
-            <PostCard :post="post" />
-          </router-link>
-          <router-link class="no-link" :to="{ name: 'post-details', params: { postId: post.id } }" v-else>
+          <router-link class="no-link" :to="{ name: 'post-details', params: { postId: post.id } }">
             <PostCard :post="post" />
           </router-link>
         </b-col>

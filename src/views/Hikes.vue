@@ -31,7 +31,7 @@
 
       <b-row>
         <b-col cols="12" md="6" lg="4" v-for="hike in hikes" :key="`hike-card-${hike.id}`">
-          <router-link class="no-link" :to="{ name: 'hike-details', params: { hikeId: hike.id } }">
+          <router-link class="no-link" :to="{ name: 'post-details', params: { postId: hike.id } }">
             <PostCard :post="hike" />
           </router-link>
         </b-col>

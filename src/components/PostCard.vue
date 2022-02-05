@@ -5,7 +5,7 @@
     <div class="post-details">
       <div class="post-name text-primary">{{ post.title }}</div>
       <div class="post-date my-3"><i class="icofont-ui-calendar" /> {{ post.createdOn | toDate }}</div>
-      <div class="post-hills my-3" v-if="post.hills"><i class="icofont-tag" /> <b-badge variant="secondary" class="mx-1" v-for="hill in post.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
+      <div class="post-hills my-3" v-if="post.hills && post.hills.length > 0"><i class="icofont-tag" /> <b-badge variant="secondary" class="mx-1" v-for="hill in post.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
     </div>
     <div class="post-overview" v-if="post.type === 'hike' && post.stats">
       <div class="post-overview">
@@ -28,7 +28,6 @@
     <div v-if="showDragHandle" class="drag-handle">
       <i class="icofont-drag icofont-3x" />
     </div>
-    <router-link class="no-link stretched-link" :to="{ name: `hike-details`, params: { hikeId: post.id } }" v-if="post.type === 'hike'" />
     <router-link class="no-link stretched-link" :to="{ name: `post-details`, params: { postId: post.id } }" v-else />
   </div>
 </template>

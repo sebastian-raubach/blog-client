@@ -106,6 +106,16 @@
         <TimeDistanceProfile :sourceFile="tdProfileContent" v-if="tdProfileContent" />
       </div>
 
+      <template v-if="stories && stories.length > 0">
+        <b-row v-for="story in stories" :key="`story-${story.id}`" class="pt-5">
+          <b-col cols="6" md="4" lg="3" v-for="storyPost in story.posts" :key="`post-card-${story.id}-${storyPost.id}`" :class="{ grayscale: storyPost.id !== post.id }">
+            <router-link class="no-link" :to="{ name: 'post-details', params: { postId: storyPost.id } }">
+              <PostCard :post="storyPost" />
+            </router-link>
+          </b-col>
+        </b-row>
+      </template>
+
     </b-container>
 
     <CoolLightBox
@@ -122,6 +132,7 @@ import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 import ElevationProfile from '@/components/charts/ElevationProfile'
 import GpxMap from '@/components/GpxMap'
 import Header from '@/components/Header'
+import PostCard from '@/components/PostCard'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 
 import api from '@/mixins/api.js'
@@ -133,6 +144,7 @@ export default {
     ElevationProfile,
     GpxMap,
     Header,
+    PostCard,
     TimeDistanceProfile
   },
   data: function () {
@@ -141,7 +153,8 @@ export default {
       gpxContent: null,
       tdProfileContent: null,
       evProfileContent: null,
-      coolboxIndex: null
+      coolboxIndex: null,
+      stories: null
     }
   },
   computed: {
@@ -203,15 +216,20 @@ export default {
     const postId = this.$route.params.postId || this.$route.params.hikeId
 
     if (postId) {
-      if (this.$route.name === 'hike-details') {
-        this.apiGetHike(postId, result => {
-          this.post = result
-        })
-      } else {
-        this.apiGetPost(postId, result => {
-          this.post = result
-        })
-      }
+      this.apiGetPost(postId, result => {
+        this.post = result
+      })
+
+      this.apiPostStoryList({
+        page: 0,
+        limit: this.MAX_JAVA_INTEGER,
+        orderBy: 'createdOn',
+        ascending: 0
+      }, {
+        postId: +postId
+      }, result => {
+        this.stories = result
+      })
     }
   }
 }
@@ -231,5 +249,8 @@ export default {
 }
 .ratings .card .b-rating {
   background-color: transparent;
+}
+.grayscale {
+  filter: grayscale(1);
 }
 </style>

@@ -9,17 +9,16 @@ export default {
      * @param {String} method (Optional) REST method (default: `'get'`)
      * @returns Promise
      */
-    axios: function ({ url = null, params = null, method = 'get', dataType = 'json', contentType = 'application/json; charset=utf-8', useAuth = true, success = null, error = null }) {
+    axios: function ({ url = null, params = null, data = null, method = 'get', dataType = 'json', contentType = 'application/json; charset=utf-8', useAuth = true, success = null, error = null }) {
       let requestData = null
       let requestParams = null
 
       // Stringify the data object for non-GET requests
-      if (params !== null || params !== undefined) {
-        if (method === 'get') {
-          requestParams = params
-        } else {
-          requestData = params
-        }
+      if (params !== undefined && params !== null) {
+        requestParams = params
+      }
+      if (data !== undefined && data !== null) {
+        requestData = data
       }
 
       const headers = {
@@ -100,13 +99,10 @@ export default {
       })
     },
     apiPostPostList: function (data, onSuccess, onError) {
-      return this.axios({ url: 'post', method: 'post', params: data, success: onSuccess, error: onError })
+      return this.axios({ url: 'post', method: 'post', params: { postType: 'news' }, data: data, success: onSuccess, error: onError })
     },
     apiPostHikeList: function (data, onSuccess, onError) {
-      return this.axios({ url: 'hike', method: 'post', params: data, success: onSuccess, error: onError })
-    },
-    apiGetHike: function (hikeId, onSuccess, onError) {
-      return this.axios({ url: `hike/${hikeId}`, success: onSuccess, error: onError })
+      return this.axios({ url: 'post', method: 'post', params: { postType: 'hike' }, data: data, success: onSuccess, error: onError })
     },
     apiGetPost: function (postId, onSuccess, onError) {
       return this.axios({ url: `post/${postId}`, success: onSuccess, error: onError })
@@ -115,49 +111,49 @@ export default {
       return this.axios({ url: `story/${storyId}`, success: onSuccess, error: onError })
     },
     apiPostToken: function (data, onSuccess, onError) {
-      return this.axios({ url: 'token', method: 'post', params: data, success: onSuccess, error: onError })
+      return this.axios({ url: 'token', method: 'post', data: data, success: onSuccess, error: onError })
     },
     apiPutPost: function (data, onSuccess, onError) {
-      return this.axios({ url: 'import/post', method: 'put', params: data, success: onSuccess, error: onError })
+      return this.axios({ url: 'import/post', method: 'put', data: data, success: onSuccess, error: onError })
     },
     apiPostPostMedia: function (postId, formData, onSuccess, onError) {
-      return this.axios({ url: `post/media/${postId}`, method: 'post', contentType: 'multipart/form-data', params: formData, success: onSuccess, error: onError })
+      return this.axios({ url: `post/media/${postId}`, method: 'post', contentType: 'multipart/form-data', data: formData, success: onSuccess, error: onError })
     },
-    apiGetGpx: function (hikeId, onSuccess, onError) {
-      return this.axios({ url: `hike/${hikeId}/gpx`, dataType: 'blob', success: onSuccess, error: onError })
+    apiGetGpx: function (postId, onSuccess, onError) {
+      return this.axios({ url: `post/${postId}/gpx`, dataType: 'blob', success: onSuccess, error: onError })
     },
-    apiGetTimeDistanceProfile: function (hikeId, onSuccess, onError) {
-      return this.axios({ url: `hike/${hikeId}/time-distance`, dataType: 'blob', success: onSuccess, error: onError })
+    apiGetTimeDistanceProfile: function (postId, onSuccess, onError) {
+      return this.axios({ url: `post/${postId}/time-distance`, dataType: 'blob', success: onSuccess, error: onError })
     },
-    apiGetElevationProfile: function (hikeId, onSuccess, onError) {
-      return this.axios({ url: `hike/${hikeId}/elevation`, dataType: 'blob', success: onSuccess, error: onError })
+    apiGetElevationProfile: function (postId, onSuccess, onError) {
+      return this.axios({ url: `post/${postId}/elevation`, dataType: 'blob', success: onSuccess, error: onError })
     },
     apiGetHikeYears: function (onSuccess, onError) {
-      return this.axios({ url: 'hike/years', success: onSuccess, error: onError })
+      return this.axios({ url: 'post/years', params: { postType: 'hike' }, success: onSuccess, error: onError })
     },
     apiGetPostYears: function (onSuccess, onError) {
-      return this.axios({ url: 'post/years', success: onSuccess, error: onError })
+      return this.axios({ url: 'post/years', params: { postType: 'news' }, success: onSuccess, error: onError })
     },
     apiGetHillTypes: function (onSuccess, onError) {
       return this.axios({ url: 'hill/types', success: onSuccess, error: onError })
     },
     apiGetHikesForYear: function (year, onSuccess, onError) {
-      return this.axios({ url: 'hike', params: { year: year }, success: onSuccess, error: onError })
+      return this.axios({ url: 'post', params: { year: year, postType: 'hike' }, success: onSuccess, error: onError })
     },
     apiGetPostsForYear: function (year, onSuccess, onError) {
-      return this.axios({ url: 'post', params: { year: year }, success: onSuccess, error: onError })
+      return this.axios({ url: 'post', params: { year: year, postType: 'news' }, success: onSuccess, error: onError })
     },
     apiGetHills: function (name, onSuccess, onError) {
       return this.axios({ url: 'hill', params: { name: name }, success: onSuccess, error: onError })
     },
     apiPutStory: function (data, onSuccess, onError) {
-      return this.axios({ url: 'import/story', method: 'put', params: data, success: onSuccess, error: onError })
+      return this.axios({ url: 'import/story', method: 'put', data: data, success: onSuccess, error: onError })
     },
     apiPutStoryPosts: function (storyId, data, onSuccess, onError) {
-      return this.axios({ url: `import/story/${storyId}/post`, method: 'put', params: data, success: onSuccess, error: onError })
+      return this.axios({ url: `import/story/${storyId}/post`, method: 'put', data: data, success: onSuccess, error: onError })
     },
-    apiPostStoryList: function (data, onSuccess, onError) {
-      return this.axios({ url: 'story', method: 'post', params: data, success: onSuccess, error: onError })
+    apiPostStoryList: function (data, params, onSuccess, onError) {
+      return this.axios({ url: 'story', method: 'post', data: data, params: params, success: onSuccess, error: onError })
     },
     /**
      * Returns the current authentication token

@@ -427,11 +427,7 @@ export default {
       }
 
       this.apiPostPostMedia(postId, formData, result => {
-        if (this.newPost.type === 'news') {
-          this.$router.push({ name: 'post-details', params: { postId: postId } })
-        } else {
-          this.$router.push({ name: 'hike-details', params: { hikeId: postId } })
-        }
+        this.$router.push({ name: 'post-details', params: { postId: postId } })
         emitter.emit('set-loading', false)
       }, error => {
         emitter.emit('set-loading', false)

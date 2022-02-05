@@ -5,6 +5,11 @@ const { Point } = BaseBuilder.MODELS
 
 export default {
   methods: {
+    gpxToGeoJSON: function (gpx) {
+      const p = new GpxParser()
+      p.parse(gpx)
+      return p.toGeoJSON()
+    },
     gpxGetStats: function (points) {
       let distance = 0
       let ascent = 0

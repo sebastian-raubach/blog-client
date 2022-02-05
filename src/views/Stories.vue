@@ -118,7 +118,7 @@ export default {
       limit: this.MAX_JAVA_INTEGER,
       orderBy: 'createdOn',
       ascending: 0
-    }, result => {
+    }, null, result => {
       this.stories = result
     })
   }
