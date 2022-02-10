@@ -5,7 +5,7 @@
     <div id="about" class="about-section">
       <b-container class="text-center">
         <h2 class="section-title">Wozu eine Webseite?</h2>
-        <p class="intro">Diese Webseite gibt es aus zwei Gründen: Zum einen möchten wir Leute auf dem Laufenden halten die noch Interesse daran haben was bei uns so los ist und zum anderen ist diese Seite auch eine schöne Ansammlung an Erinnerungen für unse selber.</p>
+        <p class="intro">Diese Webseite gibt es aus zwei Gründen: Zum einen möchten wir Leute auf dem Laufenden halten die noch Interesse daran haben was bei uns so los ist und zum anderen ist diese Seite auch eine schöne Ansammlung an Erinnerungen für uns selber.</p>
 
         <b-row class="items-wrapper">
           <b-col cols="12" md="6" class="item">
@@ -28,25 +28,13 @@
               <h3 class="item-title">Neuigkeiten</h3>
               <div class="item-desc mb-3">
                 Hier findet man alle Neuigkeiten. Von Kleinigkeiten bis zu größeren Veränderungen ist hier alles zu entdecken.</div>
-              <b-button variant="primary" :to="{ name: 'news' }">Los geht's</b-button>
+              <b-button variant="primary" :to="{ name: 'posts' }">Los geht's</b-button>
             </div>
           </b-col>
-          <!-- <b-col cols="12" md="4" class="item">
-            <div class="item-inner">
-              <div class="figure-holder">
-                <img class="figure-image" src="@/assets/category-stuff.svg" alt="image">
-              </div>
-              <h3 class="item-title">Sonstiges</h3>
-              <div class="item-desc mb-3">
-                Alles was nicht woanders rein gepasst hat wurde hier sicher verstaut. Das ein oder andere Interessante ist bestimmt zu finden.</div>
-              <b-button variant="primary" :to="{ name: 'misc' }">Los geht's</b-button>
-            </div>
-          </b-col> -->
         </b-row>
       </b-container>
 
       <LatestPosts type="post" :posts="posts" />
-
       <LatestPosts type="hike" :posts="hikes" />
     </div>
   </div>

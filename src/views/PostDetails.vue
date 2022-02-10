@@ -138,6 +138,8 @@ import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 import api from '@/mixins/api.js'
 import { mapGetters } from 'vuex'
 
+const emitter = require('tiny-emitter/instance')
+
 export default {
   components: {
     CoolLightBox,
@@ -216,8 +218,10 @@ export default {
     const postId = this.$route.params.postId || this.$route.params.hikeId
 
     if (postId) {
+      emitter.emit('set-loading', true)
       this.apiGetPost(postId, result => {
         this.post = result
+        emitter.emit('set-loading', false)
       })
 
       this.apiPostStoryList({
