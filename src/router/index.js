@@ -13,12 +13,26 @@ const routes = [
   {
     path: '/hike',
     name: 'hikes',
-    component: () => import(/* webpackChunkName: "hikes" */ '@/views/Hikes.vue')
-  },
-  {
-    path: '/hike/:year',
-    name: 'hikes-year',
-    component: () => import(/* webpackChunkName: "hikes-year" */ '@/views/Hikes.vue')
+    component: {
+      render (c) { return c('router-view') }
+    },
+    children: [
+      {
+        path: '',
+        name: 'hikes',
+        component: () => import(/* webpackChunkName: "hikes" */ '@/views/Hikes.vue')
+      },
+      {
+        path: 'hills',
+        name: 'hills',
+        component: () => import(/* webpackChunkName: "hills" */ '@/views/Hills.vue')
+      },
+      {
+        path: ':year',
+        name: 'hikes-year',
+        component: () => import(/* webpackChunkName: "hikes-year" */ '@/views/Hikes.vue')
+      }
+    ]
   },
   {
     path: '/post',
@@ -44,11 +58,6 @@ const routes = [
     path: '/post-details/:postId',
     name: 'post-details',
     component: () => import(/* webpackChunkName: "post-details" */ '@/views/PostDetails.vue')
-  },
-  {
-    path: '/hills',
-    name: 'hills',
-    component: () => import(/* webpackChunkName: "hills" */ '@/views/Hills.vue')
   },
   {
     path: '/post-editor',

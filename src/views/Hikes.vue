@@ -5,6 +5,8 @@
     <b-container class="mt-5">
       <h1>Wanderungen ({{ totalHikes }})</h1>
 
+      <p>Auf einer <router-link :to="{ name: 'hills' }">separaten Seite</router-link> haben wir eine Karte von allen Bergen die wir bisher bestiegen haben.</p>
+
       <h2>Übersicht</h2>
       <b-row>
         <b-col cols="12" md="4" v-for="(hill, index) in hillTypeCounts" :key="`type-${index}`" class="mb-3">

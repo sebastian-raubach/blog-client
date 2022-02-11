@@ -33,8 +33,26 @@ export default {
       id: id
     }
   },
+  computed: {
+    hillIcons: function () {
+      const result = {}
+
+      Object.keys(this.hillTypes).forEach(k => {
+        const hill = this.hillTypes[k]
+
+        result[k] = L.divIcon({
+          html: `<i class="text-primary ${hill.icon}"/>`,
+          iconSize: hill.iconSize,
+          iconAnchor: [hill.iconSize[0] / 2, hill.iconSize[1] / 2],
+          popupAnchor: [0, -hill.iconSize[1] / 2]
+        })
+      })
+
+      return result
+    }
+  },
   watch: {
-    hills: function (newValue) {
+    hills: function () {
       this.update()
     }
   },
@@ -54,7 +72,7 @@ export default {
         const latLngBounds = L.latLngBounds()
         this.hills.forEach(m => {
           const latLng = [m.latitude, m.longitude]
-          const marker = L.marker(latLng)
+          const marker = L.marker(latLng, { icon: this.hillIcons[m.type] })
           latLngBounds.extend(latLng)
           // marker.addTo(this.map)
           this.markerClusterer.addLayers(marker)
@@ -108,5 +126,11 @@ export default {
 <style scoped>
 .map {
   height: 90vh;
+}
+</style>
+<style>
+.leaflet-div-icon {
+  background: transparent;
+  border: 0;
 }
 </style>
