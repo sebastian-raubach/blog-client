@@ -156,6 +156,7 @@ export default {
   z-index: 1;
   border: 3px solid #494d55;
   box-sizing: content-box;
+  object-fit: cover;
 }
 .avatars {
   text-align: left;
