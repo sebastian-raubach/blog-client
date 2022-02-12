@@ -3,7 +3,7 @@
     <Header title="Stories" message="Zusammenfassungen mehrerer Berichte und Wanderungen für Dinge wie Urlaube." :image="null" :backgroundImage="require(`@/assets/banner-stories.jpg`)" />
 
     <b-container class="mt-5">
-      <b-card no-body class="overflow-hidden position-relative story-card" v-for="(story, index) in stories" :key="`story-${story.id}`">
+      <b-card no-body class="overflow-hidden position-relative story-card mb-4" v-for="(story, index) in stories" :key="`story-${story.id}`">
         <b-row no-gutters>
           <b-col md="8" class="position-static">
             <b-card-body>
