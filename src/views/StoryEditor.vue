@@ -90,6 +90,8 @@ import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap'
 
 import Draggable from 'vuedraggable'
 
+const emitter = require('tiny-emitter/instance')
+
 import api from '@/mixins/api.js'
 
 export default {
@@ -125,14 +127,17 @@ export default {
       this.content = this.content + umlaut
     },
     createStory: function () {
+      emitter.emit('set-loading', true)
+
       this.apiPutStory({
         title: this.title,
         content: this.content,
         createdOn: new Date(this.date).toISOString()
       }, storyId => {
         this.apiPutStoryPosts(storyId, this.posts.map(p => p.id), result => {
-          // TODO: Redirect
-          console.log(result)
+          this.$router.push({ name: 'story-details', params: { storyId: storyId } })
+
+          emitter.emit('set-loading', true)
         })
       })
     },

@@ -26,7 +26,7 @@
     <b-container>
       <b-row class="pt-5">
         <b-col cols="12" md="6">
-          <h2><i class="icofont-ui-calendar" /> {{ post.createdOn | toDate }}</h2>
+          <h2><i class="icofont-ui-calendar" /> {{ post.createdOn | toDate }}<span v-if="post.endDate"> - {{ post.endDate | toDate }}</span></h2>
         </b-col>
         <b-col cols="12" md="6">
           <h2 class="text-md-right" v-if="post.hills"><i class="icofont-hill" /> <b-badge class="mx-2" v-for="hill in post.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></h2>

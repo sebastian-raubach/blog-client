@@ -27,8 +27,11 @@
               </b-form-group>
             </b-col>
             <b-col cols="12" md="6">
-              <b-form-group label-for="date" label="Datum">
-                <b-input type="date" id="date" v-model="newPost.date" required  :state="formState.date" />
+              <b-form-group label-for="date-start" label="Start-Datum">
+                <b-input type="date" id="date-start" v-model="newPost.date" required  :state="formState.date" />
+              </b-form-group>
+              <b-form-group label-for="date-end" label="End-Datum">
+                <b-input type="date" id="date-end" v-model="newPost.endDate" required  :state="formState.endDate" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -264,6 +267,7 @@ export default {
       newPost: {
         type: 'hike',
         date: null,
+        endDate: null,
         title: null,
         description: '',
         hills: [],
@@ -364,6 +368,7 @@ export default {
         title: this.isSet(this.newPost.title),
         description: this.isSet(this.newPost.description),
         date: this.isSet(this.newPost.date),
+        endDate: true,
         images: this.newPost.images.filter(i => i.file).map(i => this.isSet(i.description) && this.isSet(i.file)).reduce((a, b) => a && b, true),
         videos: this.newPost.videos.map(v => this.isSet(v)).reduce((a, b) => a && b, true),
         hills: this.newPost.type === 'news' || (this.newPost.hills.map(h => this.isSet(h.type) && this.isSet(h.latitude) && this.isSet(h.longitude) && this.isSet(h.elevation) && this.isSet(h.name)).reduce((a, b) => a && b, true)),
@@ -394,6 +399,7 @@ export default {
         title: this.newPost.title,
         content: this.newPost.description,
         createdOn: new Date(this.newPost.date).toISOString(),
+        endDate: this.newPost.endDate ? new Date(this.newPost.endDate).toISOString() : null,
         rating: this.newPost.rating,
         stats: this.newPost.stats,
         hills: this.newPost.hills,
@@ -476,6 +482,7 @@ export default {
       this.setFromJson(this.newPost, 'title', json, 'title')
       this.setFromJson(this.newPost, 'description', json, 'text')
       this.setFromJson(this.newPost, 'date', json, 'date')
+      this.setFromJson(this.newPost, 'endDate', json, 'end')
       this.setFromJson(this.newPost.rating, 'weather', json.rating, 'weather')
       this.setFromJson(this.newPost.rating, 'path', json.rating, 'track')
       this.setFromJson(this.newPost.rating, 'view', json.rating, 'view')
