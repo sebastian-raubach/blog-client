@@ -31,7 +31,7 @@
                 <b-input type="date" id="date-start" v-model="newPost.date" required  :state="formState.date" />
               </b-form-group>
               <b-form-group label-for="date-end" label="End-Datum">
-                <b-input type="date" id="date-end" v-model="newPost.endDate" required  :state="formState.endDate" />
+                <b-input type="date" id="date-end" v-model="newPost.endDate" :state="formState.endDate" />
               </b-form-group>
             </b-col>
           </b-row>
