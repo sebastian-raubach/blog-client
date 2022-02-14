@@ -11,6 +11,17 @@
           <b-col cols="12" md="6" class="item">
             <div class="item-inner">
               <div class="figure-holder">
+                <img class="figure-image" src="@/assets/category-news.svg" alt="image">
+              </div>
+              <h3 class="item-title">Neuigkeiten</h3>
+              <div class="item-desc mb-3">
+                Hier findet man alle Neuigkeiten. Von Kleinigkeiten bis zu größeren Veränderungen ist hier alles zu entdecken.</div>
+              <b-button variant="primary" :to="{ name: 'posts' }">Los geht's</b-button>
+            </div>
+          </b-col>
+          <b-col cols="12" md="6" class="item">
+            <div class="item-inner">
+              <div class="figure-holder">
                 <img class="figure-image" src="@/assets/category-hiking.svg" alt="image">
               </div>
               <h3 class="item-title">Wanderberichte</h3>
@@ -20,22 +31,17 @@
               <b-button variant="primary" :to="{ name: 'hikes' }">Los geht's</b-button>
             </div>
           </b-col>
-          <b-col cols="12" md="6" class="item">
-            <div class="item-inner">
-              <div class="figure-holder">
-                <img class="figure-image" src="@/assets/category-news.svg" alt="image">
-              </div>
-              <h3 class="item-title">Neuigkeiten</h3>
-              <div class="item-desc mb-3">
-                Hier findet man alle Neuigkeiten. Von Kleinigkeiten bis zu größeren Veränderungen ist hier alles zu entdecken.</div>
-              <b-button variant="primary" :to="{ name: 'posts' }">Los geht's</b-button>
-            </div>
-          </b-col>
         </b-row>
       </b-container>
 
-      <LatestPosts type="post" :posts="posts" />
-      <LatestPosts type="hike" :posts="hikes" />
+      <b-row no-gutters>
+        <b-col cols=12 xl=6>
+          <LatestPosts type="post" :posts="posts" class="h-100" />
+        </b-col>
+        <b-col cols=12 xl=6>
+          <LatestPosts type="hike" :posts="hikes" class="h-100" />
+        </b-col>
+      </b-row>
     </div>
   </div>
 </template>

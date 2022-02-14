@@ -102,7 +102,7 @@ export default {
       } else {
         return this.stories.map(s => {
           if (s.posts && s.posts.length > 0) {
-            return s.posts.map(p => {
+            return s.posts.slice(0, 10).map(p => {
               if (p.images && p.images.length > 0) {
                 return p.images.find(i => i.isPrimary)
               } else {

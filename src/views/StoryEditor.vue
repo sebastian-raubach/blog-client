@@ -90,9 +90,9 @@ import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap'
 
 import Draggable from 'vuedraggable'
 
-const emitter = require('tiny-emitter/instance')
-
 import api from '@/mixins/api.js'
+
+const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
