@@ -69,7 +69,12 @@ export default {
     maxDate: function () {
       if (this.story.posts && this.story.posts.length > 0) {
         try {
-          return Math.max(...this.story.posts.map(p => new Date(p.createdOn)))
+          return Math.max(...this.story.posts.map(p => {
+            const start = new Date(p.createdOn)
+            const end = p.endDate ? new Date(p.endDate) : null
+
+            return end > start ? end : start
+          }))
         } catch (err) {
           return new Date(this.story.createdOn)
         }
