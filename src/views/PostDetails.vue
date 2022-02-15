@@ -29,11 +29,11 @@
           <h2><i class="icofont-ui-calendar" /> {{ post.createdOn | toDate }}<span v-if="post.endDate"> - {{ post.endDate | toDate }}</span></h2>
         </b-col>
         <b-col cols="12" md="6">
-          <h2 class="text-md-right" v-if="post.hills"><i class="icofont-hill" /> <b-badge class="mx-2" v-for="hill in post.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></h2>
+          <h2 class="text-md-right" v-if="post.hills && post.hills.length > 0"><i class="icofont-hill" /> <b-badge class="mx-2" v-for="hill in post.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></h2>
         </b-col>
       </b-row>
 
-      <b-row class="pt-5" v-if="post.hills">
+      <b-row class="pt-5" v-if="post.hills && post.hills.length > 0">
         <b-col cols="12" md="4" v-for="hill in post.hills" :key="`hill-card-${hill.id}`" class="post-stats">
           <b-card no-body class="hill mb-4">
             <b-card-body>
@@ -191,7 +191,7 @@ export default {
   },
   watch: {
     post: function (newValue) {
-      if (newValue.type === 'hike') {
+      if (newValue.stats && newValue.stats.gpxPath) {
         this.apiGetGpx(newValue.id, result => {
           const reader = new FileReader()
           reader.readAsText(result)
@@ -199,7 +199,9 @@ export default {
             this.gpxContent = reader.result
           }
         })
+      }
 
+      if (newValue.type === 'hike') {
         this.apiGetTimeDistanceProfile(newValue.id, result => {
           this.tdProfileContent = result
         })
@@ -207,7 +209,6 @@ export default {
           this.evProfileContent = result
         })
       } else {
-        this.gpxContent = null
         this.tdProfileContent = null
         this.evProfileContent = null
       }
