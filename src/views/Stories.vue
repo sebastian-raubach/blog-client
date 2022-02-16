@@ -9,7 +9,7 @@
             <b-card-body>
               <div class="d-flex justify-content-between align-items-center">
                 <b-card-title>{{ story.title }}</b-card-title>
-                <b-card-sub-title>
+                <b-card-sub-title class="text-right">
                   <i class="icofont-ui-calendar" /> {{ minDates[index] | toDate }} - {{ maxDates[index] | toDate }}
                 </b-card-sub-title>
               </div>
@@ -164,8 +164,8 @@ export default {
   object-fit: cover;
 }
 .avatars {
-  text-align: left;
-  padding-left: 40px;
+  text-align: right;
+  padding-left: 60px;
 }
 @media (min-width: 768px) {
   .story-image:after {
