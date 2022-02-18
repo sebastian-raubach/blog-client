@@ -218,6 +218,8 @@ import gpx from '@/mixins/gpx.js'
 import { debounce } from 'lodash'
 import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap'
 
+import Compressor from 'compressorjs'
+
 const emitter = require('tiny-emitter/instance')
 
 export default {
@@ -448,28 +450,43 @@ export default {
     },
     addImage: async function () {
       const newImage = {
-        data: await this.toBase64(this.tempImage),
+        data: await this.loadImage(this.tempImage),
         file: this.tempImage,
         description: null,
         isPrimary: false
       }
 
       this.newPost.images.push(newImage)
+
+      this.tempImage = null
     },
     updateImage: async function (index) {
-      this.newPost.images[index].data = await this.toBase64(this.newPost.images[index].file)
+      this.loadImage(this.newPost.images[index].file)
+        .then(image => {
+          this.newPost.images[index].data = image
+        })
     },
-    /**
-     * Converts the user selected file into base64
-     * @param file The image file
-     */
-    toBase64: function (file) {
-      // Return a promise as we can't wait for this
+    loadImage: function (file) {
       return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = error => reject(error)
+        /* eslint-disable no-new */
+        new Compressor(file, {
+          quality: 0.6,
+          maxWidth: 800,
+          maxHeight: 800,
+
+          // The compression process is asynchronous,
+          // which means you have to access the `result` in the `success` hook function.
+          success: result => {
+            const reader = new FileReader()
+            reader.onload = () => {
+              resolve(reader.result)
+            }
+            reader.readAsDataURL(result)
+          },
+          error: () => {
+            reject(new Error('Image processing failed'))
+          }
+        })
       })
     },
     addCharacter: function (umlaut) {

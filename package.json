@@ -11,6 +11,7 @@
     "axios": "^0.21.4",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
+    "compressorjs": "^1.1.1",
     "core-js": "^3.6.5",
     "d3-dsv": "^3.0.1",
     "gpx-builder": "^3.7.8",
