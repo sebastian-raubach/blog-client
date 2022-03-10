@@ -4,7 +4,7 @@
 
     <b-container class="mt-5">
       <b-card no-body class="overflow-hidden position-relative story-card mb-4" v-for="(story, index) in stories" :key="`story-${story.id}`">
-        <b-row no-gutters>
+        <b-row no-gutters class="stories">
           <b-col md="8" class="position-static">
             <b-card-body>
               <div class="d-flex justify-content-between align-items-center">
@@ -180,6 +180,11 @@ export default {
     -moz-transform: rotate(15deg);
     transform: rotate(15deg);
     box-shadow: 6px 6px 12px rgb(0 0 0 / 50%);
+  }
+  .stories:hover .story-image:after {
+    -webkit-transform: rotate(5deg);
+    -moz-transform: rotate(5deg);
+    transform: rotate(5deg);
   }
 }
 </style>

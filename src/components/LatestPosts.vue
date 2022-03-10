@@ -153,7 +153,7 @@ export default {
   border-right: 10px solid rgba(0, 0, 0, 0.4);
 }
 .content:hover:before {
-  border-right: 10px solid #406310aa;
+  border-right: 10px solid rgba(0,76,148,.6666666666666666);
   transition: border-right 0.15s linear;
 }
 .description {
