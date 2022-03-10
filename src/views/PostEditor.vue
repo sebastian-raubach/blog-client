@@ -95,9 +95,14 @@
                 <b-col cols="6" md="10">
                   <b-card-body>
                     <b-card-title>{{ hill.name }}</b-card-title>
-                    <div class="my-2"><b-badge variant="primary"><i class="icofont-info-circle" /> {{ hillTypes[hill.type].name }}</b-badge><b-badge class="ml-2" v-if="hill.latitude && hill.longitude"><i class="icofont-google-map" /> {{ hill.latitude.toFixed(2) }}, {{ hill.longitude.toFixed(2) }}</b-badge><b-badge class="ml-2" v-if="hill.elevation"><i class="icofont-arrow-up" /> {{ hill.elevation.toFixed(2) }}</b-badge></div>
+                    <div class="my-2">
+                      <b-badge variant="primary"><i class="icofont-info-circle" /> {{ hillTypes[hill.type].name }}</b-badge>
+                      <b-badge class="ml-2" v-if="hill.latitude && hill.longitude"><i class="icofont-google-map" /> {{ hill.latitude.toFixed(2) }}, {{ hill.longitude.toFixed(2) }}</b-badge>
+                      <b-badge class="ml-2" v-if="hill.elevation"><i class="icofont-arrow-up" /> {{ hill.elevation.toFixed(2) }}</b-badge>
+                    </div>
 
                     <b-button-group class="my-2">
+                      <b-button :variant="hill.successful ? 'success' : 'danger'" @click="hill.successful = !hill.successful"><BIconCheck v-if="hill.successful" /><BIconX v-else /></b-button>
                       <b-button variant="info" @click="selectLocation(index)"><i class="icofont-google-map" /></b-button>
                       <b-button variant="danger" @click="removeHill(index)"><i class="icofont-ui-delete" /></b-button>
                     </b-button-group>
@@ -114,6 +119,7 @@
                                    @hit="tempHill = $event"
                                    placeholder="Bergnamen eingeben zum Suchen"
                                    @input="lookupHill" />
+            <b-form-checkbox switch v-model="tempHill.successful">Erfolgreich?</b-form-checkbox>
 
             <b-button :disabled="!tempHill.name || !tempHill.type" variant="success" @click="addHill"><i class="icofont-plus" /></b-button>
           </div>
@@ -211,6 +217,7 @@ import GpxMap from '@/components/GpxMap'
 import Header from '@/components/Header'
 import JsonModal from '@/components/modals/JsonModal'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
+import { BIconCheck, BIconX } from 'bootstrap-vue'
 
 import api from '@/mixins/api.js'
 import gpx from '@/mixins/gpx.js'
@@ -224,6 +231,8 @@ const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
+    BIconCheck,
+    BIconX,
     ElevationProfile,
     GpsSelectorModal,
     GpxMap,
@@ -242,7 +251,8 @@ export default {
       tempHill: {
         name: null,
         type: 'munro',
-        elevation: null
+        elevation: null,
+        successful: true
       },
       tempLocation: {
         latitude: null,
@@ -523,7 +533,8 @@ export default {
 
           return {
             name: h.name,
-            type: type
+            type: type,
+            successful: (h.counts === undefined || h.counts === null) ? true : h.counts
           }
         })
       }

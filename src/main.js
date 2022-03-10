@@ -28,7 +28,8 @@ import {
   CarouselPlugin,
   EmbedPlugin,
   SpinnerPlugin,
-  ProgressPlugin
+  ProgressPlugin,
+  FormCheckboxPlugin
 } from 'bootstrap-vue'
 
 const axiosDefaults = require('axios/lib/defaults')
@@ -46,6 +47,7 @@ Vue.use(FormRatingPlugin)
 Vue.use(FormFilePlugin)
 Vue.use(FormRadioPlugin)
 Vue.use(FormSelectPlugin)
+Vue.use(FormCheckboxPlugin)
 Vue.use(InputGroupPlugin)
 Vue.use(MediaPlugin)
 Vue.use(FormTextareaPlugin)
