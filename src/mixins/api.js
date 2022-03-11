@@ -137,11 +137,11 @@ export default {
     apiGetHillTypes: function (onSuccess, onError) {
       return this.axios({ url: 'hill/types', success: onSuccess, error: onError })
     },
-    apiGetHikesForYear: function (year, onSuccess, onError) {
-      return this.axios({ url: 'post', params: { year: year, postType: 'hike', orderBy: 'createdOn', ascending: 0 }, success: onSuccess, error: onError })
+    apiGetPosts: function (params, onSuccess, onError) {
+      return this.axios({ url: 'post', params: params, success: onSuccess, error: onError })
     },
-    apiGetPostsForYear: function (year, onSuccess, onError) {
-      return this.axios({ url: 'post', params: { year: year, postType: 'news', orderBy: 'createdOn', ascending: 0 }, success: onSuccess, error: onError })
+    apiGetStories: function (params, onSuccess, onError) {
+      return this.axios({ url: 'story', params: params, success: onSuccess, error: onError })
     },
     apiGetHills: function (name, onSuccess, onError) {
       return this.axios({ url: 'hill', params: { name: name }, success: onSuccess, error: onError })

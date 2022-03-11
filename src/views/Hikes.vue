@@ -83,7 +83,7 @@ export default {
   mixins: [api],
   methods: {
     updateHikes: function () {
-      this.apiGetHikesForYear(this.year, result => {
+      this.apiGetPosts({ year: this.year, postType: 'hike', orderBy: 'createdOn', ascending: 0 }, result => {
         this.hikes = result
       })
     }

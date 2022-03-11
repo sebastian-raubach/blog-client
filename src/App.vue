@@ -18,6 +18,7 @@
             <b-nav-item :to="{ name: 'posts' }">Neuigkeiten</b-nav-item>
             <b-nav-item :to="{ name: 'stories' }">Stories</b-nav-item>
             <b-nav-item :to="{ name: 'hikes' }">Wandern</b-nav-item>
+            <b-nav-item :to="{ name: 'search' }">Suche</b-nav-item>
             <b-nav-item-dropdown right variant="dark" text="Admin" v-if="storeToken">
               <b-dropdown-item variant="dark" :to="{ name: 'post-editor' }">Neuer Beitrag</b-dropdown-item>
               <b-dropdown-item variant="dark" :to="{ name: 'story-editor' }">Neue Story</b-dropdown-item>

@@ -59,7 +59,7 @@ export default {
   mixins: [api],
   methods: {
     updatePosts: function () {
-      this.apiGetPostsForYear(this.year, result => {
+      this.apiGetPosts({ year: this.year, postType: 'news', orderBy: 'createdOn', ascending: 0 }, result => {
         this.posts = result
       })
     }
