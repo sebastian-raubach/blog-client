@@ -181,10 +181,11 @@ export default {
     transform: rotate(15deg);
     box-shadow: 6px 6px 12px rgb(0 0 0 / 50%);
   }
+  .stories .story-image:after {
+    transition: right 0.15s linear;
+  }
   .stories:hover .story-image:after {
-    -webkit-transform: rotate(5deg);
-    -moz-transform: rotate(5deg);
-    transform: rotate(5deg);
+    right: 80%;
   }
 }
 </style>
