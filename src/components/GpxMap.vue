@@ -58,6 +58,9 @@ export default {
       this.markers = []
 
       this.gpxLayer = new L.GPX(this.gpx, {
+        gpx_options: {
+          joinTrackSegments: false
+        },
         async: true,
         polyline_options: {
           color: '#E74C3C',

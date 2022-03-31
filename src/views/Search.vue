@@ -6,7 +6,7 @@
       <b-form @submit.prevent="runSearch">
         <b-form-group label="Suchbegriff" label-for="search">
           <b-input-group>
-            <b-input id="search" type="search" v-model="search" placeholder="Suchbegriff eingeben..." />
+            <b-input id="search" type="search" v-model="search" placeholder="Suchbegriff eingeben..." autofocus ref="search" />
             <b-input-group-append>
               <b-button variant="success" type="submit"><i class="icofont-search-document" /></b-button>
             </b-input-group-append>
@@ -83,6 +83,9 @@ export default {
         emitter.emit('set-loading', false)
       })
     }
+  },
+  mounted: function () {
+    this.$nextTick(() => this.$refs.search.focus())
   }
 }
 </script>

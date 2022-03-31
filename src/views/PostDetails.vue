@@ -108,7 +108,7 @@
 
       <template v-if="stories && stories.length > 0">
         <b-row v-for="story in stories" :key="`story-${story.id}`" class="pt-5">
-          <b-col cols="6" md="4" lg="3" v-for="storyPost in story.posts" :key="`post-card-${story.id}-${storyPost.id}`" :class="{ grayscale: storyPost.id !== post.id }">
+          <b-col cols="12" md="6" lg="4" v-for="storyPost in story.posts" :key="`post-card-${story.id}-${storyPost.id}`" :class="{ grayscale: storyPost.id !== post.id }">
             <router-link class="no-link" :to="{ name: 'post-details', params: { postId: storyPost.id } }">
               <PostCard :post="storyPost" />
             </router-link>
