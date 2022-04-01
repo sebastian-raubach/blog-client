@@ -4,6 +4,8 @@ import router from '@/router'
 import store from '@/store'
 import mixin from '@/mixins/mixin'
 
+import VueGtag from 'vue-gtag'
+
 import {
   FormPlugin,
   FormInputPlugin,
@@ -33,6 +35,11 @@ import {
 } from 'bootstrap-vue'
 
 const axiosDefaults = require('axios/lib/defaults')
+
+Vue.use(VueGtag, {
+  bootstrap: false,
+  enabled: false
+}, router)
 
 Vue.use(LayoutPlugin)
 Vue.use(NavbarPlugin)

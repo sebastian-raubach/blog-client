@@ -155,6 +155,9 @@ export default {
     apiPostStoryList: function (data, params, onSuccess, onError) {
       return this.axios({ url: 'story', method: 'post', data: data, params: params, success: onSuccess, error: onError })
     },
+    apiGetSettings: function (onSuccess, onError) {
+      return this.axios({ url: 'settings', success: onSuccess, error: onError })
+    },
     /**
      * Returns the current authentication token
      */
