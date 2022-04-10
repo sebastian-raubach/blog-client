@@ -4,7 +4,7 @@
     <div class="overlay" />
     <div class="post-details">
       <div class="post-name text-primary">{{ post.title }}</div>
-      <div class="post-date my-3"><i class="icofont-ui-calendar" /> {{ post.createdOn | toDate }}<span v-if="post.endDate"> - {{ post.endDate | toDate }}</span></div>
+      <div class="post-date w-50 my-3"><i class="icofont-ui-calendar" /> {{ post.createdOn | toDate }}<span v-if="post.endDate"> - {{ post.endDate | toDate }}</span></div>
       <div class="post-hills my-3" v-if="post.hills && post.hills.length > 0"><i class="icofont-tag" /> <b-badge variant="secondary" class="mx-1" v-for="hill in post.hills" :key="`hill-badge-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
     </div>
     <div class="post-overview" v-if="post.type === 'hike' && post.stats">

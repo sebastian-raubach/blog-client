@@ -152,6 +152,12 @@ export default {
     apiPutStoryPosts: function (storyId, data, onSuccess, onError) {
       return this.axios({ url: `import/story/${storyId}/post`, method: 'put', data: data, success: onSuccess, error: onError })
     },
+    apiGetPostRelated: function (postId, onSuccess, onError) {
+      return this.axios({ url: `post/${postId}/related`, success: onSuccess, error: onError })
+    },
+    apiPostRelatedPostIds: function (postId, postIds, onSuccess, onError) {
+      return this.axios({ url: `post/${postId}/related`, method: 'post', data: postIds, success: onSuccess, error: onError })
+    },
     apiPostStoryList: function (data, params, onSuccess, onError) {
       return this.axios({ url: 'story', method: 'post', data: data, params: params, success: onSuccess, error: onError })
     },

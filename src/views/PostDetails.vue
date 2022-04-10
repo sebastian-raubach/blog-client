@@ -107,13 +107,33 @@
       </div>
 
       <template v-if="stories && stories.length > 0">
-        <b-row v-for="story in stories" :key="`story-${story.id}`" class="pt-5">
-          <b-col cols="12" md="6" lg="4" v-for="storyPost in story.posts" :key="`post-card-${story.id}-${storyPost.id}`" :class="{ grayscale: storyPost.id !== post.id }">
-            <router-link class="no-link" :to="{ name: 'post-details', params: { postId: storyPost.id } }">
-              <PostCard :post="storyPost" />
+        <h2 class="pt-5">Stories</h2>
+        <p>Dieser Beitrag ist teil von den folgenden Stories.</p>
+        <div v-for="story in stories" :key="`story-${story.id}`" class="pb-5">
+          <h3>{{ story.title }}</h3>
+          <b-row>
+            <b-col cols="12" md="6" lg="4" v-for="storyPost in story.posts" :key="`post-card-${story.id}-${storyPost.id}`" :class="{ grayscale: storyPost.id !== post.id }">
+              <router-link class="no-link" :to="{ name: 'post-details', params: { postId: storyPost.id } }">
+                <PostCard :post="storyPost" />
+              </router-link>
+            </b-col>
+          </b-row>
+        </div>
+      </template>
+
+      <template v-if="relatedPosts || storeToken">
+        <h2>Ähnliche Berichte</h2>
+        <p>Dieser Beitrag ist verbunden mit den folgenden anderen Berichten.</p>
+
+        <b-row>
+          <b-col cols="12" md="6" lg="4" v-for="relPost in relatedPosts" :key="`post-card-${relPost.id}`">
+            <router-link class="no-link" :to="{ name: 'post-details', params: { postId: relPost.id } }">
+              <PostCard :post="relPost" />
             </router-link>
           </b-col>
         </b-row>
+
+        <b-button v-if="storeToken" @click="$refs.relatedPostModal.show()"><i class="icofont-plus-square"/> Hinzufügen</b-button>
       </template>
 
     </b-container>
@@ -122,6 +142,8 @@
       :items="coolboxImages"
       :index="coolboxIndex"
       @close="coolboxIndex = null" />
+
+    <RelatedPostModal v-if="storeToken" ref="relatedPostModal" @related-posts-selected="addRelatedPosts" />
   </div>
 </template>
 
@@ -134,6 +156,7 @@ import GpxMap from '@/components/GpxMap'
 import Header from '@/components/Header'
 import PostCard from '@/components/PostCard'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
+import RelatedPostModal from '@/components/modals/RelatedPostModal'
 
 import api from '@/mixins/api.js'
 import { mapGetters } from 'vuex'
@@ -147,6 +170,7 @@ export default {
     GpxMap,
     Header,
     PostCard,
+    RelatedPostModal,
     TimeDistanceProfile
   },
   data: function () {
@@ -156,12 +180,14 @@ export default {
       tdProfileContent: null,
       evProfileContent: null,
       coolboxIndex: null,
-      stories: null
+      stories: null,
+      relatedPosts: null
     }
   },
   computed: {
     ...mapGetters([
-      'storeBaseUrl'
+      'storeBaseUrl',
+      'storeToken'
     ]),
     coolboxImages: function () {
       if (!this.post || !this.post.images || this.post.images.length < 1) {
@@ -215,6 +241,18 @@ export default {
     }
   },
   mixins: [api],
+  methods: {
+    addRelatedPosts: function (postIds) {
+      this.apiPostRelatedPostIds(this.post.id, postIds, () => {
+        this.getRelatedPosts()
+      })
+    },
+    getRelatedPosts: function () {
+      this.apiGetPostRelated(this.post.id, result => {
+        this.relatedPosts = result
+      })
+    }
+  },
   created: function () {
     const postId = this.$route.params.postId || this.$route.params.hikeId
 
@@ -223,6 +261,8 @@ export default {
       this.apiGetPost(postId, result => {
         this.post = result
         emitter.emit('set-loading', false)
+
+        this.getRelatedPosts()
       })
 
       this.apiPostStoryList({
