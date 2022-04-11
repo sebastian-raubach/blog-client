@@ -122,7 +122,7 @@
       </template>
 
       <template v-if="relatedPosts || storeToken">
-        <h2>Ähnliche Berichte</h2>
+        <h2 class="mt-5">Ähnliche Berichte</h2>
         <p>Dieser Beitrag ist verbunden mit den folgenden anderen Berichten.</p>
 
         <b-row>

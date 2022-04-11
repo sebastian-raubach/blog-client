@@ -82,9 +82,18 @@ export default {
         this.posts = result
         emitter.emit('set-loading', false)
       })
+
+      // Change window URL to reflect new search term
+      window.history.replaceState({}, null, this.$router.resolve({ name: 'search-query', params: { searchTerm: this.search } }).href)
     }
   },
   mounted: function () {
+    this.search = this.$route.params.searchTerm
+
+    if (this.search) {
+      this.runSearch()
+    }
+
     this.$nextTick(() => this.$refs.search.focus())
   }
 }
