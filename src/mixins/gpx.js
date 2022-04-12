@@ -42,11 +42,11 @@ export default {
       return buildGPX(builder.toObject())
     },
     gpxHaversine: function (first, second) {
-      var r = 6371
-      var dLat = this.gpxToRadians(second.lat - first.lat)
-      var dLng = this.gpxToRadians(second.lon - first.lon)
-      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(this.gpxToRadians(first.lat)) * Math.cos(this.gpxToRadians(second.lat)) * Math.sin(dLng / 2) * Math.sin(dLng / 2)
-      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+      const r = 6371
+      const dLat = this.gpxToRadians(second.lat - first.lat)
+      const dLng = this.gpxToRadians(second.lon - first.lon)
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(this.gpxToRadians(first.lat)) * Math.cos(this.gpxToRadians(second.lat)) * Math.sin(dLng / 2) * Math.sin(dLng / 2)
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 
       return r * c
     },
@@ -106,7 +106,7 @@ export default {
       const newPoints = [prevPoint]
       let point
 
-      for (var i = 1, len = points.length; i < len; i++) {
+      for (let i = 1, len = points.length; i < len; i++) {
         point = points[i]
 
         if (this.gpxGetSqDist(point, prevPoint) > sqTolerance) {
@@ -125,7 +125,7 @@ export default {
       let maxSqDist = sqTolerance
       let index
 
-      for (var i = first + 1; i < last; i++) {
+      for (let i = first + 1; i < last; i++) {
         const sqDist = this.gpxGetSqSegDist(points[i], points[first], points[last])
 
         if (sqDist > maxSqDist) {
