@@ -1,6 +1,17 @@
 <template>
   <div>
     <div :id="`map-${id}`" class="map" />
+
+    <div v-if="hill" ref="popupContent" class="p-3">
+      <h4>{{ hill.name }}</h4>
+      <h5><b-badge :style="`color: white; background-color: ${hillTypes[hill.type].color}`"><i class="icofont-google-map"/> {{ hill.type }}</b-badge></h5>
+
+      <b-card class="my-2" v-for="post in hill.posts" :key="`hill-${hill.id}-post-${post.id}`">
+        <h6>{{ post.title }}</h6>
+        <h7 class="my-2"><b-badge>{{ new Date(post.createdOn).toLocaleDateString() }}</b-badge></h7>
+        <router-link class="d-block" :to="{ name: 'post-details', params: { postId: post.id } }">Bericht lesen</router-link>
+      </b-card>
+    </div>
   </div>
 </template>
 
@@ -30,7 +41,8 @@ export default {
   data: function () {
     const id = this.uuidv4()
     return {
-      id: id
+      id: id,
+      hill: null
     }
   },
   computed: {
@@ -41,10 +53,10 @@ export default {
         const hill = this.hillTypes[k]
 
         result[k] = L.divIcon({
-          html: `<i class="text-primary ${hill.icon}"/>`,
-          iconSize: hill.iconSize,
-          iconAnchor: [hill.iconSize[0] / 2, hill.iconSize[1] / 2],
-          popupAnchor: [0, -hill.iconSize[1] / 2]
+          html: `<i class="icofont-google-map icofont-3x" style="color: ${hill.color}"/>`,
+          iconSize: [36, 40],
+          iconAnchor: [18, 36],
+          popupAnchor: [0, -36]
         })
       })
 
@@ -72,11 +84,15 @@ export default {
         const latLngBounds = L.latLngBounds()
         this.hills.forEach(m => {
           const latLng = [m.latitude, m.longitude]
-          const marker = L.marker(latLng, { icon: this.hillIcons[m.type] })
+          const marker = L.marker(latLng, { icon: this.hillIcons[m.type] }).bindPopup('')
+          marker.on('click', e => {
+            const popup = e.target.getPopup()
+            this.hill = m
+            this.$nextTick(() => popup.setContent(this.$refs.popupContent))
+          })
           latLngBounds.extend(latLng)
           // marker.addTo(this.map)
           this.markerClusterer.addLayers(marker)
-          marker.bindPopup(m.name)
           this.markers.push(marker)
         })
         if (latLngBounds.isValid()) {
