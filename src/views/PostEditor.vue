@@ -41,7 +41,7 @@
               <b-button v-for="umlaut in umlauts" :key="`umlaut-${umlaut}`" @click="addCharacter(umlaut)">{{ umlaut }}</b-button>
             </b-button-group>
           </b-button-toolbar>
-          <b-textarea rows="20" class="post-description" v-model="newPost.description" required  :state="formState.description"/>
+          <b-textarea rows="20" class="post-description" v-model="newPost.description" required ref="postDescription" :state="formState.description"/>
 
           <div v-html="newPost.description" />
         </div>
@@ -73,12 +73,12 @@
 
           <b-input-group v-for="(video, index) in newPost.videos" :key="`video-${index}`" class="my-3">
             <b-form-input v-model="newPost.videos[index]" :state="formState.videos" />
-            <b-input-group-addon><b-button variant="danger" @click="newPost.videos.push(tempUrl)"><i class="icofont-ui-delete" /></b-button></b-input-group-addon>
+            <b-input-group-addon><b-button variant="danger" @click="deleteVideo(index)"><i class="icofont-ui-delete" /></b-button></b-input-group-addon>
           </b-input-group>
 
           <b-input-group class="my-3">
             <b-form-input type="url" v-model="tempUrl" :state="formState.videos" />
-            <b-input-group-addon><b-button variant="success" @click="newPost.videos.push(tempUrl)"><i class="icofont-plus" /></b-button></b-input-group-addon>
+            <b-input-group-addon><b-button variant="success" @click="addVideo"><i class="icofont-plus" /></b-button></b-input-group-addon>
           </b-input-group>
         </div>
 
@@ -241,6 +241,18 @@ export default {
     TimeDistanceProfile,
     VueTypeaheadBootstrap
   },
+  beforeRouteLeave: function (to, from, next) {
+    this.$bvModal.msgBoxConfirm('Soll der Post-Editor wirklich verlassen werden?', {
+      title: 'Warnung',
+      okTitle: 'Ja',
+      cancelTitle: 'Nein'
+    })
+      .then(value => {
+        if (value) {
+          next()
+        }
+      })
+  },
   data: function () {
     return {
       formValidated: false,
@@ -331,6 +343,13 @@ export default {
   },
   mixins: [api, gpx],
   methods: {
+    deleteVideo: function (index) {
+      this.newPost.videos.splice(index, 1)
+    },
+    addVideo: function () {
+      this.newPost.videos.push(this.tempUrl)
+      this.tempUrl = null
+    },
     lookupHill: debounce(function () {
       this.apiGetHills(this.tempHillName, result => {
         this.hills = result
@@ -500,7 +519,18 @@ export default {
       })
     },
     addCharacter: function (umlaut) {
-      this.newPost.description = this.newPost.description + umlaut
+      const start = this.$refs.postDescription.selectionStart
+      const end = this.$refs.postDescription.selectionEnd
+
+      const temp = this.newPost.description
+
+      this.newPost.description = temp.substring(0, start) + umlaut + temp.substring(end, temp.length)
+
+      this.$nextTick(() => {
+        this.$refs.postDescription.focus()
+        this.$refs.postDescription.selectionStart = start + 1
+        this.$refs.postDescription.selectionEnd = start + 1
+      })
     },
     removeHill: function (index) {
       this.newPost.hills.splice(index, 1)
