@@ -6,7 +6,13 @@
       <h1>Berichte ({{ totalNews }})</h1>
 
       <h2>In Jahr</h2>
-      <b-form-select :options="postYearOptions" v-model="year" />
+      <b-row>
+        <b-col cols=6 md=4 lg=3 xl=2 v-for="theYear in postYears" :key="`post-year-${theYear.year}`" class="mb-3">
+          <b-card :title="`${theYear.year}`" :sub-title="`${theYear.count} ${theYear.count === 1 ? 'Bericht' : 'Berichte'}`" :border-variant="year === theYear.year ? 'primary' : null" class="post-card" :style="{ backgroundColor: theYear.color }">
+            <a href="#" class="stretched-link" @click.prevent="updateYear(theYear.year)" />
+          </b-card>
+        </b-col>
+      </b-row>
 
       <b-row>
         <b-col cols="12" md="6" lg="4" v-for="post in posts" :key="`post-card-${post.id}`">
@@ -25,6 +31,10 @@ import PostCard from '@/components/PostCard'
 
 import api from '@/mixins/api.js'
 
+import ColorGradient from '@/util/ColorGradient'
+const style = getComputedStyle(document.body)
+const gradient = new ColorGradient([style.getPropertyValue('--dark').trim(), style.getPropertyValue('--primary').trim()], 100)
+
 export default {
   components: {
     Header,
@@ -34,8 +44,7 @@ export default {
     return {
       postYears: null,
       posts: null,
-      year: null,
-      postYearOptions: null
+      year: null
     }
   },
   computed: {
@@ -58,6 +67,9 @@ export default {
   },
   mixins: [api],
   methods: {
+    updateYear: function (newValue) {
+      this.year = newValue
+    },
     updatePosts: function () {
       this.apiGetPosts({ year: this.year, postType: 'news', orderBy: 'createdOn', ascending: 0 }, result => {
         this.posts = result
@@ -68,18 +80,17 @@ export default {
     const yearParam = this.$route.params.year
 
     if (yearParam) {
-      this.year = yearParam
+      this.year = +yearParam
     }
 
     this.apiGetPostYears(result => {
+      const maxCount = Math.max(...result.map(y => y.count))
+      result.forEach(y => {
+        y.color = gradient.getColorAt(0, maxCount, y.count)
+      })
+
       this.postYears = result
 
-      this.postYearOptions = result.map(y => {
-        return {
-          value: y.year,
-          text: `${y.year} - ${y.count} ${y.count > 1 ? 'Berichte' : 'Bericht'}`
-        }
-      })
       if (!this.year) {
         this.year = result[0].year
       }
@@ -88,6 +99,11 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.post-card {
+  transition: filter 0.15s ease-in-out;
+}
+.post-card:hover {
+  filter: brightness(85%);
+}
 </style>

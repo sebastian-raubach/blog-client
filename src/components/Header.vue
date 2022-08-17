@@ -71,6 +71,16 @@ export default {
   overflow: hidden;
 }
 
+.banner-carousel {
+  height: 560px;
+}
+.banner-section .banner-inner {
+  height: 560px;
+}
+.banner-carousel .banner-inner .item {
+  height: 560px;
+}
+
 .banner-section .figure-holder {
   position: relative;
   width: 100%;

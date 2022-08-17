@@ -71,12 +71,11 @@ export default {
 
 <style scoped>
 .post-card {
-    background-color: #FFF;
-    border-radius: 5px;
-    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    position: relative;
-    margin: 10px auto;
+  background-color: #FFF;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  margin: 10px auto;
 }
 
 .post-card .overlay {

@@ -1,26 +1,11 @@
 <template>
   <div v-if="post">
-    <Header :title="post.title" :message="null" :image="null" :backgroundImage="backgroundImage" :height="400">
-      <b-row slot="content" v-if="post.ratings" class="ratings">
-        <b-col cols="12" md="4">
-          <b-card class="mb-4">
-            <b-card-title class="text-center text-light">Wetter</b-card-title>
-            <b-card-text><b-form-rating variant="warning" size="lg" v-model="post.ratings.weather" readonly no-border /></b-card-text>
-          </b-card>
-        </b-col>
-        <b-col cols="12" md="4">
-          <b-card class="mb-4">
-            <b-card-title class="text-center text-light">Aussicht</b-card-title>
-            <b-card-text><b-form-rating variant="warning" size="lg" v-model="post.ratings.view" readonly no-border /></b-card-text>
-          </b-card>
-        </b-col>
-        <b-col cols="12" md="4">
-          <b-card class="mb-4">
-            <b-card-title class="text-center text-light">Strecke</b-card-title>
-            <b-card-text><b-form-rating variant="warning" size="lg" v-model="post.ratings.path" readonly no-border /></b-card-text>
-          </b-card>
-        </b-col>
-      </b-row>
+    <Header :title="post.title" :message="null" :image="null" :backgroundImage="backgroundImage">
+      <div slot="content" v-if="post.ratings" class="ratings d-flex flex-column justify-content-center align-items-end mb-5">
+        <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Wetter'"><h1 class="mr-3"><BIconCloudSun variant="warning" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.weather" readonly inline no-border /></div>
+        <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Aussicht'"><h1 class="mr-3"><BIconBinoculars variant="info" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.view" readonly inline no-border /></div>
+        <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Strecke'"><h1 class="mr-3"><BIconSignpost variant="success" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.path" readonly inline no-border /></div>
+      </div>
     </Header>
 
     <b-container>
@@ -161,10 +146,15 @@ import RelatedPostModal from '@/components/modals/RelatedPostModal'
 import api from '@/mixins/api.js'
 import { mapGetters } from 'vuex'
 
+import { BIconCloudSun, BIconBinoculars, BIconSignpost } from 'bootstrap-vue'
+
 const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
+    BIconCloudSun,
+    BIconBinoculars,
+    BIconSignpost,
     CoolLightBox,
     ElevationProfile,
     GpxMap,

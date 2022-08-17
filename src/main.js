@@ -31,7 +31,8 @@ import {
   EmbedPlugin,
   SpinnerPlugin,
   ProgressPlugin,
-  FormCheckboxPlugin
+  FormCheckboxPlugin,
+  TooltipPlugin
 } from 'bootstrap-vue'
 
 const axiosDefaults = require('axios/lib/defaults')
@@ -41,7 +42,7 @@ Vue.use(VueGtag, {
   enabled: false
 }, router)
 
-Vue.use(LayoutPlugin)
+Vue.use(LayoutPlugin, { breakpoints: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] })
 Vue.use(NavbarPlugin)
 Vue.use(ImagePlugin)
 Vue.use(FormPlugin)
@@ -67,6 +68,7 @@ Vue.use(EmbedPlugin)
 Vue.use(SpinnerPlugin)
 Vue.use(ProgressPlugin)
 Vue.use(NavbarPlugin)
+Vue.use(TooltipPlugin)
 
 Vue.config.productionTip = false
 

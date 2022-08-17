@@ -2,8 +2,8 @@
   <div>
     <Header :title="title" :message="message" :image="image" :backgroundImage="require(`@/assets/${backgroundImage}`)" />
 
-    <div id="about" class="about-section">
-      <b-container class="text-center">
+    <div id="about" class="about-section bg-light text-dark pt-5">
+      <b-container class="text-center py-5">
         <h2 class="section-title">Wozu eine Webseite?</h2>
         <p class="intro">Diese Webseite gibt es aus zwei Gründen: Zum einen möchten wir Leute auf dem Laufenden halten die noch Interesse daran haben was bei uns so los ist und zum anderen ist diese Seite auch eine schöne Ansammlung an Erinnerungen für uns selber.</p>
 
@@ -90,12 +90,6 @@ export default {
 </script>
 
 <style>
-.about-section {
-  padding-top: 90px;
-  background-color: #ecf0f1;
-  color: #474b4f;
-}
-
 .about-section .section-title {
   margin: 0;
   margin-bottom: 15px;
@@ -109,10 +103,6 @@ export default {
   max-width: 760px;
   margin: 0 auto;
   margin-bottom: 60px;
-}
-
-.about-section .items-wrapper {
-  padding-bottom: 60px;
 }
 
 .about-section .items-wrapper .figure-holder {
