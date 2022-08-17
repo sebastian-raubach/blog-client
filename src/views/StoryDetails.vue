@@ -5,7 +5,8 @@
     <b-container class="mt-5">
       <h2><i class="icofont-ui-calendar" /> {{ minDate | toDate }} - {{ maxDate | toDate }}</h2>
 
-      <div class="pt-5" v-html="story.content" />
+      <div class="pt-5" v-html="story.content" v-if="story.content" />
+      <VueMarkdown class="pt-5" :source="story.contentMarkdown" v-else-if="story.contentMarkdown" />
 
       <b-row>
         <b-col cols="12" md="6" lg="4" v-for="post in story.posts" :key="`post-card-${post.id}`">
@@ -19,6 +20,7 @@
 </template>
 
 <script>
+import VueMarkdown from '@adapttive/vue-markdown'
 import Header from '@/components/Header'
 import PostCard from '@/components/PostCard'
 
@@ -29,7 +31,8 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     Header,
-    PostCard
+    PostCard,
+    VueMarkdown
   },
   data: function () {
     return {

@@ -54,7 +54,8 @@
         </b-col>
       </b-row>
 
-      <div class="pt-5" v-html="post.content" />
+      <div class="pt-5" v-html="post.content" v-if="post.content" />
+      <VueMarkdown class="pt-5" :source="post.contentMarkdown" v-else-if="post.contentMarkdown" />
 
       <b-carousel
         v-if="post.images && post.images.length > 0"
@@ -133,6 +134,7 @@
 </template>
 
 <script>
+import VueMarkdown from '@adapttive/vue-markdown'
 import CoolLightBox from 'vue-cool-lightbox'
 import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 
@@ -161,7 +163,8 @@ export default {
     Header,
     PostCard,
     RelatedPostModal,
-    TimeDistanceProfile
+    TimeDistanceProfile,
+    VueMarkdown
   },
   data: function () {
     return {

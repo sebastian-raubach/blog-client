@@ -23,6 +23,8 @@
                 </b-button-group>
               </b-button-toolbar>
               <b-textarea rows="5" class="story-description" id="content" v-model="content" required />
+
+              <VueMarkdown :source="content" />
             </b-form-group>
           </b-col>
           <b-col cols=12 sm=6>
@@ -82,6 +84,7 @@
 </template>
 
 <script>
+import VueMarkdown from '@adapttive/vue-markdown'
 import Header from '@/components/Header'
 import PostCard from '@/components/PostCard'
 
@@ -99,6 +102,7 @@ export default {
     Draggable,
     Header,
     PostCard,
+    VueMarkdown,
     VueTypeaheadBootstrap
   },
   data: function () {

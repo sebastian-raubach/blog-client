@@ -43,7 +43,7 @@
           </b-button-toolbar>
           <b-textarea rows="20" class="post-description" v-model="newPost.description" required ref="postDescription" :state="formState.description"/>
 
-          <div v-html="newPost.description" />
+          <VueMarkdown :source="newPost.description" />
         </div>
 
         <hr />
@@ -211,6 +211,7 @@
 <script>
 import Vue from 'vue'
 
+import VueMarkdown from '@adapttive/vue-markdown'
 import ElevationProfile from '@/components/charts/ElevationProfile'
 import GpsSelectorModal from '@/components/modals/GpsSelectorModal'
 import GpxMap from '@/components/GpxMap'
@@ -239,6 +240,7 @@ export default {
     Header,
     JsonModal,
     TimeDistanceProfile,
+    VueMarkdown,
     VueTypeaheadBootstrap
   },
   beforeRouteLeave: function (to, from, next) {
@@ -428,7 +430,7 @@ export default {
       this.apiPutPost({
         type: this.newPost.type,
         title: this.newPost.title,
-        content: this.newPost.description,
+        contentMarkdown: this.newPost.description,
         createdOn: new Date(this.newPost.date).toISOString(),
         endDate: this.newPost.endDate ? new Date(this.newPost.endDate).toISOString() : null,
         rating: this.newPost.rating,

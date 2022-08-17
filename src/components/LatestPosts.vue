@@ -20,7 +20,8 @@
                   </b-col>
                 </b-row>
                 <div v-if="post.hills"><b-badge class="mr-2 my-2" v-for="hill in post.hills" variant="light" :key="`hill-${post.id}-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
-                <div class="description" v-html="post.content" />
+                <div class="description" v-html="post.content" v-if="post.content" />
+                <VueMarkdown class="description" :source="post.contentMarkdown" v-else-if="post.contentMarkdown" />
               </div>
             </router-link>
           </div>
@@ -33,7 +34,12 @@
 <script>
 import { mapGetters } from 'vuex'
 
+import VueMarkdown from '@adapttive/vue-markdown'
+
 export default {
+  components: {
+    VueMarkdown
+  },
   props: {
     type: {
       type: String,

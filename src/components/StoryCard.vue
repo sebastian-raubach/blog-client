@@ -11,7 +11,8 @@
           </div>
           <div class="story-content-wrapper">
             <b-card-text class="story-description">
-              <div v-html="story.content" />
+              <div v-html="story.content" v-if="story.content" />
+              <VueMarkdown :source="story.contentMarkdown" v-else-if="story.contentMarkdown" />
             </b-card-text>
           </div>
           <div class="d-flex justify-content-between align-items-end">
@@ -34,7 +35,12 @@
 <script>
 import { mapGetters } from 'vuex'
 
+import VueMarkdown from '@adapttive/vue-markdown'
+
 export default {
+  components: {
+    VueMarkdown
+  },
   props: {
     story: {
       type: Object,
