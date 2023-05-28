@@ -73,7 +73,7 @@
             :caption-html="image.description"
             :img-src="`${storeBaseUrl}image/${image.imageId}/large`">
             <template v-slot:img>
-              <b-img  class="rounded w-100" :src="`${storeBaseUrl}image/${image.imageId}/large`" :alt="image.description" />
+              <b-img-lazy class="rounded w-100" :src="`${storeBaseUrl}image/${image.imageId}/large`" :alt="image.description" />
             </template>
           </b-carousel-slide>
         </a>
