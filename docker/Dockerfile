@@ -33,7 +33,7 @@ RUN apk add --no-cache openjdk11 && \
 
 FROM tomcat:10.1-jdk11
 
-LABEL maintainer="sebastian.raubach@hutton.ac.uk"
+LABEL maintainer="sebastian@raubach.co.uk"
 
 RUN mkdir -p /usr/local/tomcat/webapps && \
     rm -rf /usr/local/tomcat/webapps/ROOT

@@ -22,6 +22,7 @@ import {
   FormFilePlugin,
   FormRadioPlugin,
   FormTextareaPlugin,
+  FormDatepickerPlugin,
   CardPlugin,
   ButtonToolbarPlugin,
   CollapsePlugin,
@@ -58,6 +59,7 @@ Vue.use(FormSelectPlugin)
 Vue.use(FormCheckboxPlugin)
 Vue.use(InputGroupPlugin)
 Vue.use(MediaPlugin)
+Vue.use(FormDatepickerPlugin)
 Vue.use(FormTextareaPlugin)
 Vue.use(CardPlugin)
 Vue.use(ButtonToolbarPlugin)

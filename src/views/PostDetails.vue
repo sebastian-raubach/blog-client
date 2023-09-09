@@ -18,6 +18,8 @@
         </b-col>
       </b-row>
 
+      <b-button @click="$refs.editPostModal.show()" v-if="storeToken"><BIconPencil /> Bearbeiten</b-button>
+
       <b-row class="pt-5" v-if="post.hills && post.hills.length > 0">
         <b-col cols="12" md="4" v-for="hill in post.hills" :key="`hill-card-${hill.id}`" class="post-stats">
           <b-card no-body class="hill mb-4">
@@ -130,6 +132,8 @@
       @close="coolboxIndex = null" />
 
     <RelatedPostModal v-if="storeToken" ref="relatedPostModal" @related-posts-selected="addRelatedPosts" />
+
+    <EditPostModal :post="post" ref="editPostModal" @changed="update(post.id)" />
   </div>
 </template>
 
@@ -144,11 +148,12 @@ import Header from '@/components/Header'
 import PostCard from '@/components/PostCard'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 import RelatedPostModal from '@/components/modals/RelatedPostModal'
+import EditPostModal from '@/components/modals/EditPostModal'
 
 import api from '@/mixins/api.js'
 import { mapGetters } from 'vuex'
 
-import { BIconCloudSun, BIconBinoculars, BIconSignpost } from 'bootstrap-vue'
+import { BIconCloudSun, BIconBinoculars, BIconSignpost, BIconPencil } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -156,7 +161,9 @@ export default {
   components: {
     BIconCloudSun,
     BIconBinoculars,
+    BIconPencil,
     BIconSignpost,
+    EditPostModal,
     CoolLightBox,
     ElevationProfile,
     GpxMap,
@@ -244,12 +251,8 @@ export default {
       this.apiGetPostRelated(this.post.id, result => {
         this.relatedPosts = result
       })
-    }
-  },
-  created: function () {
-    const postId = this.$route.params.postId || this.$route.params.hikeId
-
-    if (postId) {
+    },
+    update: function (postId) {
       emitter.emit('set-loading', true)
       this.apiGetPost(postId, result => {
         this.post = result
@@ -268,6 +271,13 @@ export default {
       }, result => {
         this.stories = result
       })
+    }
+  },
+  created: function () {
+    const postId = this.$route.params.postId || this.$route.params.hikeId
+
+    if (postId) {
+      this.update(postId)
     }
   }
 }

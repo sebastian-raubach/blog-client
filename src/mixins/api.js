@@ -1,4 +1,5 @@
 const axios = require('axios').default
+const emitter = require('tiny-emitter/instance')
 
 export default {
   methods: {
@@ -74,6 +75,7 @@ export default {
           if (!error) {
             if (err.response.status === 403 || err.response.status === 401) {
               this.$store.dispatch('setToken', null)
+              emitter.emit('set-loading', false)
             } else if (process.env.NODE_ENV === 'development') {
               console.error(err)
             }
@@ -115,6 +117,9 @@ export default {
     },
     apiPutPost: function (data, onSuccess, onError) {
       return this.axios({ url: 'import/post', method: 'put', data: data, success: onSuccess, error: onError })
+    },
+    apiPatchPost: function (postId, data, onSuccess, onError) {
+      return this.axios({ url: `post/${postId}`, method: 'patch', data: data, success: onSuccess, error: onError })
     },
     apiPostPostMedia: function (postId, formData, onSuccess, onError) {
       return this.axios({ url: `post/media/${postId}`, method: 'post', contentType: 'multipart/form-data', data: formData, success: onSuccess, error: onError })
