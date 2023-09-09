@@ -66,16 +66,16 @@
         controls
         :img-height="600"
         indicators>
-        <a :href="`${storeBaseUrl}image/${image.imageId}/large`"
+        <a :href="`${storeBaseUrl}image/${image.imageId}/large/${image.imagePath}`"
            @click.prevent="coolboxIndex = index"
            v-for="(image, index) in post.images"
            :key="`carousel-slide-${image.imageId}`"
            :data-caption="image.description">
           <b-carousel-slide
             :caption-html="image.description"
-            :img-src="`${storeBaseUrl}image/${image.imageId}/large`">
+            :img-src="`${storeBaseUrl}image/${image.imageId}/large/${image.imagePath}`">
             <template v-slot:img>
-              <b-img-lazy class="rounded w-100" :src="`${storeBaseUrl}image/${image.imageId}/large`" :alt="image.description" />
+              <b-img-lazy class="rounded w-100" :src="`${storeBaseUrl}image/${image.imageId}/large/${image.imagePath}`" :alt="image.description" />
             </template>
           </b-carousel-slide>
         </a>
@@ -195,7 +195,7 @@ export default {
       } else {
         return this.post.images.map(i => {
           return {
-            src: `${this.storeBaseUrl}image/${i.imageId}/large`,
+            src: `${this.storeBaseUrl}image/${i.imageId}/large/${i.imagePath}`,
             title: i.description
           }
         })
@@ -211,7 +211,7 @@ export default {
           primary = this.post.images[0]
         }
 
-        return `${this.storeBaseUrl}image/${primary.imageId}/large`
+        return `${this.storeBaseUrl}image/${primary.imageId}/large/${primary.imagePath}`
       }
     }
   },

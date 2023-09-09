@@ -55,7 +55,7 @@ export default {
           }
         })[0]
 
-        return `${this.storeBaseUrl}image/${primary.imageId}/large`
+        return `${this.storeBaseUrl}image/${primary.imageId}/large/${primary.imagePath}`
       }
     },
     minDate: function () {
