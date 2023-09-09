@@ -19,10 +19,6 @@
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-import 'leaflet.markercluster/dist/MarkerCluster.css'
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
-require('leaflet.markercluster')
-
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -75,10 +71,7 @@ export default {
       }
       this.markers = []
 
-      if (this.markerClusterer) {
-        // If it exists, clear all layers
-        this.markerClusterer.clearLayers()
-      }
+      this.markers.forEach(m => this.map.removeLayer(m))
 
       if (this.hills) {
         const latLngBounds = L.latLngBounds()
@@ -91,8 +84,7 @@ export default {
             this.$nextTick(() => popup.setContent(this.$refs.popupContent))
           })
           latLngBounds.extend(latLng)
-          // marker.addTo(this.map)
-          this.markerClusterer.addLayers(marker)
+          marker.addTo(this.map)
           this.markers.push(marker)
         })
         if (latLngBounds.isValid()) {
@@ -126,11 +118,6 @@ export default {
     }
 
     L.control.layers(baseMaps).addTo(this.map)
-
-    this.markerClusterer = L.markerClusterGroup({
-      chunkedLoading: true
-    })
-    this.map.addLayer(this.markerClusterer)
 
     if (this.hills) {
       this.update()
