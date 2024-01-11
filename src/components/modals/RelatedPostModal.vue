@@ -51,7 +51,8 @@
 </template>
 
 <script>
-import api from '@/mixins/api.js'
+import { apiPostHikeList, apiPostPostList } from '@/mixins/api'
+import { MAX_JAVA_INTEGER } from '@/mixins/util'
 import { debounce } from 'lodash'
 import PostCard from '@/components/PostCard'
 import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap'
@@ -77,7 +78,6 @@ export default {
       return this.posts.length > 0
     }
   },
-  mixins: [api],
   methods: {
     reset: function () {
       this.tempHikeName = null
@@ -108,10 +108,10 @@ export default {
       this.reset()
     },
     lookupHike: debounce(function () {
-      this.apiPostHikeList({
+      apiPostHikeList({
         searchTerm: this.tempHikeName,
         page: 0,
-        limit: this.MAX_JAVA_INTEGER,
+        limit: MAX_JAVA_INTEGER,
         orderBy: 'title',
         ascending: 1
       }, result => {
@@ -119,10 +119,10 @@ export default {
       })
     }),
     lookupNews: debounce(function () {
-      this.apiPostPostList({
+      apiPostPostList({
         searchTerm: this.tempNewsName,
         page: 0,
-        limit: this.MAX_JAVA_INTEGER,
+        limit: MAX_JAVA_INTEGER,
         orderBy: 'title',
         ascending: 1
       }, result => {

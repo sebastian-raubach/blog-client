@@ -29,7 +29,7 @@
 import Header from '@/components/Header'
 import PostCard from '@/components/PostCard'
 
-import api from '@/mixins/api.js'
+import { apiGetPosts, apiGetPostYears } from '@/mixins/api'
 
 import ColorGradient from '@/util/ColorGradient'
 const style = getComputedStyle(document.body)
@@ -65,13 +65,12 @@ export default {
       }
     }
   },
-  mixins: [api],
   methods: {
     updateYear: function (newValue) {
       this.year = newValue
     },
     updatePosts: function () {
-      this.apiGetPosts({ year: this.year, postType: 'news', orderBy: 'createdOn', ascending: 0 }, result => {
+      apiGetPosts({ year: this.year, postType: 'news', orderBy: 'createdOn', ascending: 0 }, result => {
         this.posts = result
       })
     }
@@ -83,7 +82,7 @@ export default {
       this.year = +yearParam
     }
 
-    this.apiGetPostYears(result => {
+    apiGetPostYears(result => {
       const maxCount = Math.max(...result.map(y => y.count))
       result.forEach(y => {
         y.color = gradient.getColorAt(0, maxCount, y.count)
@@ -91,7 +90,7 @@ export default {
 
       this.postYears = result
 
-      if (!this.year) {
+      if (!this.year && result.length > 0) {
         this.year = result[0].year
       }
     })

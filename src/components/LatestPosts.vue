@@ -19,7 +19,16 @@
                     <h6 class="text-muted text-right">{{ post.createdOn | toDate }}</h6>
                   </b-col>
                 </b-row>
-                <div v-if="post.hills"><b-badge class="mr-2 my-2" v-for="hill in post.hills" variant="light" :key="`hill-${post.id}-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
+                <b-row>
+                  <b-col>
+                    <div v-if="post.hills"><b-badge class="mr-2 my-2" v-for="hill in post.hills" variant="light" :key="`hill-${post.id}-${hill.id}`">{{ hillTypes[hill.type].name }}</b-badge></div>
+                  </b-col>
+                  <b-col class="text-right">
+                    <b-badge class="my-2" variant="light" v-if="post.type === 'hike'"><i class="icofont-hill" /> Wanderung</b-badge>
+                    <b-badge class="my-2" variant="light" v-else><i class="icofont-newspaper" /> Bericht</b-badge>
+                  </b-col>
+                </b-row>
+
                 <div class="description" v-html="post.content" v-if="post.content" />
                 <VueMarkdown class="description" :source="post.contentMarkdown" v-else-if="post.contentMarkdown" />
               </div>
@@ -33,6 +42,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+
+import { hillTypes } from '@/mixins/util'
 
 import VueMarkdown from '@adapttive/vue-markdown'
 
@@ -48,6 +59,11 @@ export default {
     posts: {
       type: Array,
       default: () => []
+    }
+  },
+  data: function () {
+    return {
+      hillTypes
     }
   },
   computed: {

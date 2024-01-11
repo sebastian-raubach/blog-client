@@ -44,7 +44,7 @@ import Header from '@/components/Header'
 import StoryCard from '@/components/StoryCard'
 import PostCard from '@/components/PostCard'
 
-import api from '@/mixins/api.js'
+import { apiGetStories, apiGetPosts } from '@/mixins/api'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -61,12 +61,11 @@ export default {
       posts: null
     }
   },
-  mixins: [api],
   methods: {
     runSearch: function () {
       emitter.emit('set-loading', true)
 
-      this.apiGetStories({
+      apiGetStories({
         orderBy: 'createdOn',
         ascending: 0,
         searchQuery: this.search
@@ -74,7 +73,7 @@ export default {
         this.stories = result
         emitter.emit('set-loading', false)
       })
-      this.apiGetPosts({
+      apiGetPosts({
         orderBy: 'createdOn',
         ascending: 0,
         searchQuery: this.search

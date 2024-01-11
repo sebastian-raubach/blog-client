@@ -34,6 +34,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { hillTypes } from '@/mixins/util'
 
 export default {
   props: {
@@ -44,6 +45,11 @@ export default {
     showDragHandle: {
       type: Boolean,
       default: false
+    }
+  },
+  data: function () {
+    return {
+      hillTypes
     }
   },
   computed: {

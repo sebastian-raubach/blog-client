@@ -5,7 +5,10 @@
         <b-row>
           <b-col cols="12" md="6">
             <b-form-group label-for="title" label="Titel">
-              <b-input id="title" v-model="newPost.title" required  :state="formState.title" />
+              <b-input id="title" v-model="newPost.title" required :state="formState.title" />
+            </b-form-group>
+            <b-form-group label-for="visible" label="Sichtbar">
+              <b-form-checkbox id="visible" switch v-model="newPost.visible" required>{{ newPost.visible ? 'Ja' : 'Nein' }}</b-form-checkbox>
             </b-form-group>
           </b-col>
           <b-col cols="12" md="6">
@@ -33,7 +36,8 @@
 
 <script>
 import VueMarkdown from '@adapttive/vue-markdown'
-import api from '@/mixins/api.js'
+
+import { apiPatchPost } from '@/mixins/api'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -61,6 +65,7 @@ export default {
         date: null,
         endDate: null,
         title: null,
+        visible: true,
         description: ''
       }
     }
@@ -71,13 +76,13 @@ export default {
         this.newPost = {
           title: newValue.title,
           description: newValue.contentMarkdown,
+          visible: newValue.visible,
           date: newValue.createdOn,
           endDate: newValue.endDate
         }
       }
     }
   },
-  mixins: [api],
   methods: {
     addCharacter: function (umlaut) {
       const start = this.$refs.postDescription.selectionStart
@@ -117,9 +122,10 @@ export default {
 
       emitter.emit('set-loading', true)
 
-      this.apiPatchPost(this.post.id, {
+      apiPatchPost(this.post.id, {
         id: this.post.id,
         title: this.newPost.title,
+        visible: this.newPost.visible,
         contentMarkdown: this.newPost.description,
         createdOn: this.newPost.date !== '' ? new Date(this.newPost.date).toISOString() : null,
         endDate: this.newPost.endDate !== '' ? (this.newPost.endDate ? new Date(this.newPost.endDate).toISOString() : null) : null
@@ -136,6 +142,7 @@ export default {
       if (this.post) {
         this.newPost = {
           title: this.post.title,
+          visible: this.post.visible,
           description: this.post.contentMarkdown,
           date: this.post.createdOn,
           endDate: this.post.endDate

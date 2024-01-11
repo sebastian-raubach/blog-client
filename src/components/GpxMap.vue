@@ -9,6 +9,9 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import '@/plugins/leaflet-distance-marker/index.js'
 import '@/plugins/leaflet-distance-marker/style.css'
+
+import { uuidv4 } from '@/mixins/util'
+
 require('leaflet-gpx')
 require('leaflet-geometryutil')
 
@@ -32,16 +35,16 @@ export default {
     }
   },
   data: function () {
-    const id = this.uuidv4()
+    const id = uuidv4()
     return {
       id: id
     }
   },
   watch: {
-    gpx: function (newValue) {
+    gpx: function () {
       this.update()
     },
-    additionalMarkers: function (newValue) {
+    additionalMarkers: function () {
       this.update()
     }
   },

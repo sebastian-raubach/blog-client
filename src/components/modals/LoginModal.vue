@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import api from '@/mixins/api.js'
+import { apiPostToken } from '@/mixins/api'
 
 export default {
   data: function () {
@@ -25,7 +25,6 @@ export default {
       feedback: null
     }
   },
-  mixins: [api],
   methods: {
     reset: function () {
       this.username = null
@@ -42,7 +41,7 @@ export default {
     onSubmit: function () {
       this.enabled = false
       this.feedback = null
-      this.apiPostToken({
+      apiPostToken({
         username: this.username,
         password: this.password
       }, result => {

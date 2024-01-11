@@ -10,7 +10,7 @@
 import Header from '@/components/Header'
 import HillMap from '@/components/HillMap'
 
-import api from '@/mixins/api.js'
+import { apiGetHills } from '@/mixins/api'
 
 export default {
   components: {
@@ -22,9 +22,8 @@ export default {
       hills: []
     }
   },
-  mixins: [api],
   mounted: function () {
-    this.apiGetHills(null, result => {
+    apiGetHills(null, result => {
       this.hills = result
     })
   }

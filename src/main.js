@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from '@/App.vue'
 import router from '@/router'
 import store from '@/store'
-import mixin from '@/mixins/mixin'
 
 import VueGtag from 'vue-gtag'
 
@@ -84,8 +83,6 @@ if (process.env.VUE_APP_BASE_URL) {
 axiosDefaults.baseURL = baseUrl
 
 store.commit('ON_BASE_URL_CHANGED', baseUrl)
-
-Vue.mixin(mixin)
 
 const moment = require('moment')
 // Date formatting

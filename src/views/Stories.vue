@@ -12,7 +12,8 @@
 import Header from '@/components/Header'
 import StoryCard from '@/components/StoryCard'
 
-import api from '@/mixins/api.js'
+import { apiPostStoryList } from '@/mixins/api'
+import { MAX_JAVA_INTEGER } from '@/mixins/util'
 
 export default {
   components: {
@@ -24,11 +25,10 @@ export default {
       stories: []
     }
   },
-  mixins: [api],
   mounted: function () {
-    this.apiPostStoryList({
+    apiPostStoryList({
       page: 0,
-      limit: this.MAX_JAVA_INTEGER,
+      limit: MAX_JAVA_INTEGER,
       orderBy: 'createdOn',
       ascending: 0
     }, null, result => {

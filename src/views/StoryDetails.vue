@@ -24,7 +24,7 @@ import VueMarkdown from '@adapttive/vue-markdown'
 import Header from '@/components/Header'
 import PostCard from '@/components/PostCard'
 
-import api from '@/mixins/api.js'
+import { apiGetStory } from '@/mixins/api'
 
 import { mapGetters } from 'vuex'
 
@@ -86,12 +86,11 @@ export default {
       }
     }
   },
-  mixins: [api],
   mounted: function () {
     const storyId = this.$route.params.storyId
 
     if (storyId) {
-      this.apiGetStory(storyId, result => {
+      apiGetStory(storyId, result => {
         this.story = result
       })
     }

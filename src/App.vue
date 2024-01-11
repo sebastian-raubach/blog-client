@@ -59,8 +59,7 @@
 import LoginModal from '@/components/modals/LoginModal'
 import { mapGetters } from 'vuex'
 import { setOptions, bootstrap } from 'vue-gtag'
-
-import api from '@/mixins/api.js'
+import { apiGetSettings } from '@/mixins/api'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -84,7 +83,6 @@ export default {
       return this.scrollY > 0
     }
   },
-  mixins: [api],
   methods: {
     logout: function () {
       this.$store.dispatch('setToken', null)
@@ -95,6 +93,9 @@ export default {
     },
     setLoading: function (visible) {
       this.loading = visible
+    },
+    toast: function (params) {
+      this.$bvToast.toast(params.message, params)
     }
   },
   mounted: function () {
@@ -102,8 +103,9 @@ export default {
     document.addEventListener('resize', this.onScrollResize)
 
     emitter.on('set-loading', this.setLoading)
+    emitter.on('toast', this.toast)
 
-    this.apiGetSettings(settings => {
+    apiGetSettings(settings => {
       if (settings && settings.googleAnalyticsKey) {
         setOptions({
           config: { id: settings.googleAnalyticsKey },
@@ -119,6 +121,7 @@ export default {
     document.removeEventListener('resize', this.onScrollResize)
 
     emitter.off('set-loading', this.setLoading)
+    emitter.off('toast', this.toast)
   }
 }
 </script>

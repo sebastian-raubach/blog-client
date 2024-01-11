@@ -52,7 +52,8 @@
 import Header from '@/components/Header'
 import PostCard from '@/components/PostCard'
 
-import api from '@/mixins/api.js'
+import { apiGetPosts, apiGetHikeYears, apiGetHillTypes } from '@/mixins/api'
+import { hillTypes } from '@/mixins/util'
 
 import ColorGradient from '@/util/ColorGradient'
 const style = getComputedStyle(document.body)
@@ -65,6 +66,7 @@ export default {
   },
   data: function () {
     return {
+      hillTypes,
       hikeYears: null,
       hillTypeCounts: null,
       hikes: null,
@@ -89,13 +91,12 @@ export default {
       }
     }
   },
-  mixins: [api],
   methods: {
     updateYear: function (newValue) {
       this.year = newValue
     },
     updateHikes: function () {
-      this.apiGetPosts({ year: this.year, postType: 'hike', orderBy: 'createdOn', ascending: 0 }, result => {
+      apiGetPosts({ year: this.year, postType: 'hike', orderBy: 'createdOn', ascending: 0 }, result => {
         this.hikes = result
       })
     }
@@ -107,7 +108,7 @@ export default {
       this.year = +yearParam
     }
 
-    this.apiGetHikeYears(result => {
+    apiGetHikeYears(result => {
       const maxCount = Math.max(...result.map(y => y.count))
       result.forEach(y => {
         y.color = gradient.getColorAt(0, maxCount, y.count)
@@ -115,12 +116,12 @@ export default {
 
       this.hikeYears = result
 
-      if (!this.year) {
+      if (!this.year && result.length > 0) {
         this.year = result[0].year
       }
     })
 
-    this.apiGetHillTypes(result => {
+    apiGetHillTypes(result => {
       this.hillTypeCounts = result
     })
   }

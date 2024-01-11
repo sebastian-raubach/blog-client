@@ -25,6 +25,9 @@
               <b-form-group label-for="title" label="Titel">
                 <b-input id="title" v-model="newPost.title" required  :state="formState.title" />
               </b-form-group>
+              <b-form-group label-for="visible" label="Sichtbar">
+                <b-form-checkbox id="visible" switch v-model="newPost.visible" required>{{ newPost.visible ? 'Ja' : 'Nein' }}</b-form-checkbox>
+              </b-form-group>
             </b-col>
             <b-col cols="12" md="6">
               <b-form-group label-for="date-start" label="Start-Datum">
@@ -220,7 +223,8 @@ import JsonModal from '@/components/modals/JsonModal'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 import { BIconCheck, BIconX } from 'bootstrap-vue'
 
-import api from '@/mixins/api.js'
+import { apiGetHills, apiPutPost, apiPostPostMedia } from '@/mixins/api'
+import { hillTypes } from '@/mixins/util'
 import gpx from '@/mixins/gpx.js'
 
 import { debounce } from 'lodash'
@@ -257,6 +261,7 @@ export default {
   },
   data: function () {
     return {
+      hillTypes,
       formValidated: false,
       formState: {
         hills: null
@@ -295,6 +300,7 @@ export default {
         date: null,
         endDate: null,
         title: null,
+        visible: true,
         description: '',
         hills: [],
         rating: {
@@ -343,7 +349,7 @@ export default {
       this.newPost.stats = this.gpxGetStats(newValue)
     }
   },
-  mixins: [api, gpx],
+  mixins: [gpx],
   methods: {
     deleteVideo: function (index) {
       this.newPost.videos.splice(index, 1)
@@ -353,7 +359,7 @@ export default {
       this.tempUrl = null
     },
     lookupHill: debounce(function () {
-      this.apiGetHills(this.tempHillName, result => {
+      apiGetHills(this.tempHillName, result => {
         this.hills = result
       })
     }),
@@ -427,9 +433,10 @@ export default {
 
       emitter.emit('set-loading', true)
 
-      this.apiPutPost({
+      apiPutPost({
         type: this.newPost.type,
         title: this.newPost.title,
+        visible: this.newPost.visible,
         contentMarkdown: this.newPost.description,
         createdOn: new Date(this.newPost.date).toISOString(),
         endDate: this.newPost.endDate ? new Date(this.newPost.endDate).toISOString() : null,
@@ -447,8 +454,10 @@ export default {
     uploadFiles: function (postId) {
       const formData = new FormData()
 
+      let someData = false
       this.newPost.images.forEach(i => {
         if (i.file && i.description) {
+          someData |= true
           formData.append('image', i.file)
           formData.append('image-description', i.description)
           formData.append('image-is-primary', i.isPrimary)
@@ -456,22 +465,30 @@ export default {
       })
 
       if (this.newPost.gpxFile) {
+        someData |= true
         formData.append('gpx', this.newPost.gpxFile)
       }
       if (this.newPost.elevationProfile) {
+        someData |= true
         formData.append('elevation-profile', this.newPost.elevationProfile)
       }
       if (this.newPost.timeDistanceProfile) {
+        someData |= true
         formData.append('time-distance-profile', this.newPost.timeDistanceProfile)
       }
 
-      this.apiPostPostMedia(postId, formData, result => {
+      if (someData) {
+        apiPostPostMedia(postId, formData, result => {
+          this.$router.push({ name: 'post-details', params: { postId: postId } })
+          emitter.emit('set-loading', false)
+        }, error => {
+          emitter.emit('set-loading', false)
+          console.error(error)
+        })
+      } else {
         this.$router.push({ name: 'post-details', params: { postId: postId } })
         emitter.emit('set-loading', false)
-      }, error => {
-        emitter.emit('set-loading', false)
-        console.error(error)
-      })
+      }
     },
     setPrimaryPhoto: function (index) {
       this.newPost.images = this.newPost.images.map((image, i) => {

@@ -7,9 +7,9 @@
       <h5><b-badge :style="`color: white; background-color: ${hillTypes[hill.type].color}`"><i class="icofont-google-map"/> {{ hill.type }}</b-badge></h5>
 
       <b-card class="my-2" v-for="post in hill.posts" :key="`hill-${hill.id}-post-${post.id}`">
-        <h6>{{ post.title }}</h6>
-        <h7 class="my-2"><b-badge>{{ new Date(post.createdOn).toLocaleDateString() }}</b-badge></h7>
-        <router-link class="d-block" :to="{ name: 'post-details', params: { postId: post.id } }">Bericht lesen</router-link>
+        <h5>{{ post.title }}</h5>
+        <h6 class="my-2"><b-badge>{{ new Date(post.createdOn).toLocaleDateString() }}</b-badge></h6>
+        <router-link class="d-block text-white" :to="{ name: 'post-details', params: { postId: post.id } }">Bericht lesen</router-link>
       </b-card>
     </div>
   </div>
@@ -18,6 +18,8 @@
 <script>
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+
+import { uuidv4, hillTypes } from '@/mixins/util'
 
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
@@ -35,8 +37,9 @@ export default {
     }
   },
   data: function () {
-    const id = this.uuidv4()
+    const id = uuidv4()
     return {
+      hillTypes,
       id: id,
       hill: null
     }

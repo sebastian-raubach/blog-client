@@ -34,14 +34,7 @@
         </b-row>
       </b-container>
 
-      <b-row no-gutters>
-        <b-col cols=12 xl=6>
-          <LatestPosts type="post" :posts="posts" class="h-100" />
-        </b-col>
-        <b-col cols=12 xl=6>
-          <LatestPosts type="hike" :posts="hikes" class="h-100" />
-        </b-col>
-      </b-row>
+      <LatestPosts type="post" :posts="posts" class="h-100" />
     </div>
   </div>
 </template>
@@ -50,7 +43,7 @@
 import Header from '@/components/Header'
 import LatestPosts from '@/components/LatestPosts'
 
-import api from '@/mixins/api.js'
+import { apiPostList } from '@/mixins/api'
 
 export default {
   components: {
@@ -63,23 +56,13 @@ export default {
       message: 'Wir laden hier (halbwegs) regelmäßig Updates von uns hoch.',
       image: 'logo.svg', // 'banner.jpg',
       backgroundImage: 'banner.jpg',
-      hikes: null,
       posts: null
     }
   },
-  mixins: [api],
   created: function () {
-    this.apiPostHikeList({
+    apiPostList({
       page: 0,
-      limit: 5,
-      orderBy: 'createdOn',
-      ascending: 0
-    }, result => {
-      this.hikes = result
-    })
-    this.apiPostPostList({
-      page: 0,
-      limit: 5,
+      limit: 10,
       orderBy: 'createdOn',
       ascending: 0
     }, result => {

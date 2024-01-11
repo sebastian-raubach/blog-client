@@ -150,8 +150,10 @@ import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 import RelatedPostModal from '@/components/modals/RelatedPostModal'
 import EditPostModal from '@/components/modals/EditPostModal'
 
-import api from '@/mixins/api.js'
+import { apiGetGpx, apiGetTimeDistanceProfile, apiGetElevationProfile, apiPostRelatedPostIds, apiGetPostRelated, apiGetPost, apiPostStoryList } from '@/mixins/api'
 import { mapGetters } from 'vuex'
+
+import { hillTypes, MAX_JAVA_INTEGER } from '@/mixins/util'
 
 import { BIconCloudSun, BIconBinoculars, BIconSignpost, BIconPencil } from 'bootstrap-vue'
 
@@ -175,6 +177,7 @@ export default {
   },
   data: function () {
     return {
+      hillTypes,
       post: null,
       gpxContent: null,
       tdProfileContent: null,
@@ -218,7 +221,7 @@ export default {
   watch: {
     post: function (newValue) {
       if (newValue.stats && newValue.stats.gpxPath) {
-        this.apiGetGpx(newValue.id, result => {
+        apiGetGpx(newValue.id, result => {
           const reader = new FileReader()
           reader.readAsText(result)
           reader.onload = () => {
@@ -228,10 +231,10 @@ export default {
       }
 
       if (newValue.type === 'hike') {
-        this.apiGetTimeDistanceProfile(newValue.id, result => {
+        apiGetTimeDistanceProfile(newValue.id, result => {
           this.tdProfileContent = result
         })
-        this.apiGetElevationProfile(newValue.id, result => {
+        apiGetElevationProfile(newValue.id, result => {
           this.evProfileContent = result
         })
       } else {
@@ -240,30 +243,29 @@ export default {
       }
     }
   },
-  mixins: [api],
   methods: {
     addRelatedPosts: function (postIds) {
-      this.apiPostRelatedPostIds(this.post.id, postIds, () => {
+      apiPostRelatedPostIds(this.post.id, postIds, () => {
         this.getRelatedPosts()
       })
     },
     getRelatedPosts: function () {
-      this.apiGetPostRelated(this.post.id, result => {
+      apiGetPostRelated(this.post.id, result => {
         this.relatedPosts = result
       })
     },
     update: function (postId) {
       emitter.emit('set-loading', true)
-      this.apiGetPost(postId, result => {
+      apiGetPost(postId, result => {
         this.post = result
         emitter.emit('set-loading', false)
 
         this.getRelatedPosts()
       })
 
-      this.apiPostStoryList({
+      apiPostStoryList({
         page: 0,
-        limit: this.MAX_JAVA_INTEGER,
+        limit: MAX_JAVA_INTEGER,
         orderBy: 'createdOn',
         ascending: 0
       }, {

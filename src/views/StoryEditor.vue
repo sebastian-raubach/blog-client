@@ -93,7 +93,8 @@ import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap'
 
 import Draggable from 'vuedraggable'
 
-import api from '@/mixins/api.js'
+import { apiPutStory, apiPutStoryPosts, apiPostHikeList, apiPostPostList } from '@/mixins/api'
+import { MAX_JAVA_INTEGER } from '@/mixins/util'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -125,7 +126,6 @@ export default {
       return !this.title || !this.content || !this.date || !this.posts || this.posts.length < 1
     }
   },
-  mixins: [api],
   methods: {
     addCharacter: function (umlaut) {
       this.content = this.content + umlaut
@@ -133,12 +133,12 @@ export default {
     createStory: function () {
       emitter.emit('set-loading', true)
 
-      this.apiPutStory({
+      apiPutStory({
         title: this.title,
         content: this.content,
         createdOn: new Date(this.date).toISOString()
       }, storyId => {
-        this.apiPutStoryPosts(storyId, this.posts.map(p => p.id), result => {
+        apiPutStoryPosts(storyId, this.posts.map(p => p.id), result => {
           this.$router.push({ name: 'story-details', params: { storyId: storyId } })
 
           emitter.emit('set-loading', true)
@@ -166,10 +166,10 @@ export default {
       this.news = []
     },
     lookupHike: debounce(function () {
-      this.apiPostHikeList({
+      apiPostHikeList({
         searchTerm: this.tempHikeName,
         page: 0,
-        limit: this.MAX_JAVA_INTEGER,
+        limit: MAX_JAVA_INTEGER,
         orderBy: 'title',
         ascending: 1
       }, result => {
@@ -177,10 +177,10 @@ export default {
       })
     }),
     lookupNews: debounce(function () {
-      this.apiPostPostList({
+      apiPostPostList({
         searchTerm: this.tempNewsName,
         page: 0,
-        limit: this.MAX_JAVA_INTEGER,
+        limit: MAX_JAVA_INTEGER,
         orderBy: 'title',
         ascending: 1
       }, result => {
