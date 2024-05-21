@@ -4,12 +4,12 @@ const axios = require('axios').default
 const emitter = require('tiny-emitter/instance')
 
 /**
-     * Sends an axios REST request to the server with the given parameter configuration
-     * @param {String} url The remote URL (relative) to send the request to
-     * @param {Object} params (Optional) Request payload in the form of a Javascript object
-     * @param {String} method (Optional) REST method (default: `'get'`)
-     * @returns Promise
-     */
+ * Sends an axios REST request to the server with the given parameter configuration
+ * @param {String} url The remote URL (relative) to send the request to
+ * @param {Object} params (Optional) Request payload in the form of a Javascript object
+ * @param {String} method (Optional) REST method (default: `'get'`)
+ * @returns Promise
+ */
 const axiosCall = ({ url = null, params = null, data = null, method = 'get', dataType = 'json', contentType = 'application/json; charset=utf-8', useAuth = true, success = null, error = null }) => {
   let requestData = null
   let requestParams = null
@@ -63,6 +63,80 @@ const axiosCall = ({ url = null, params = null, data = null, method = 'get', dat
         }
       }
 
+      success(result.data)
+    }
+  })
+
+  promise.catch(err => {
+    if (err.response) {
+      // The request was made and the server responded with a status code that falls out of the range of 2xx
+      // Log the user out if the result is forbidden and no error method has been provided
+      // Otherwise, we assume that the calling method takes care of the error
+      if (!error) {
+        if (err.response.status === 403 || err.response.status === 401) {
+          store.dispatch('setToken', null)
+          emitter.emit('set-loading', false)
+        } else if (process.env.NODE_ENV === 'development') {
+          console.error(err)
+        }
+      } else {
+        error(err.response)
+      }
+    } else if (err.request) {
+      // The request was made but no response was received `err.request` is an instance of XMLHttpRequest in the browser
+      if (err.request.textStatus === 'timeout') {
+        emitter.emit('toast', {
+          message: 'Anfrage hat zu lange gedauert.',
+          title: 'Fehler',
+          variant: 'danger',
+          autoHideDelay: 5000,
+          appendToast: true
+        })
+      }
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      if (process.env.NODE_ENV === 'development') {
+        console.error(err)
+      }
+    }
+  })
+}
+
+/**
+ * Sends an axios REST request to the server with the given parameter configuration
+ * @param {String} url The remote URL (relative) to send the request to
+ * @param {Object} params (Optional) Request payload in the form of a Javascript object
+ * @param {String} method (Optional) REST method (default: `'get'`)
+ * @returns Promise
+ */
+const axiosForm = ({ url = null, formData = null, useAuth = true, success = null, error = null }) => {
+  const headers = {
+    'Content-Type': 'multipart/form-data',
+    Authorization: 'Bearer ' + getToken()
+  }
+
+  if (!useAuth) {
+    delete headers.Authorization
+  }
+
+  const promise = axios({
+    url: url,
+    data: formData,
+    method: 'POST',
+    crossDomain: true,
+    headers: headers
+  })
+
+  promise.then(result => {
+    const t = store.getters.storeToken
+
+    // Check if the token is still valid. Renew it if so.
+    if (t && ((new Date().getTime() - new Date(t.createdOn).getTime()) <= t.lifetime)) {
+      t.createdOn = new Date().getTime()
+      store.dispatch('setToken', t)
+    }
+
+    if (success) {
       success(result.data)
     }
   })
@@ -174,6 +248,13 @@ const apiPostStoryList = (data, params, onSuccess, onError) => {
 const apiGetSettings = (onSuccess, onError) => {
   return axiosCall({ url: 'settings', success: onSuccess, error: onError })
 }
+const apiPostIndividual = (formData, onSuccess, onError) => {
+  return axiosForm({ url: 'individual', formData: formData, success: onSuccess, error: onError })
+}
+const apiGetIndividuals = (onSuccess, onError) => {
+  return axiosCall({ url: 'individual', success: onSuccess, error: onError })
+}
+
 /**
  * Returns the current authentication token
  */
@@ -215,5 +296,7 @@ export {
   apiPostRelatedPostIds,
   apiPostStoryList,
   apiGetSettings,
-  getToken
+  getToken,
+  apiPostIndividual,
+  apiGetIndividuals
 }

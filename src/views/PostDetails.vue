@@ -1,10 +1,17 @@
 <template>
   <div v-if="post">
     <Header :title="post.title" :message="null" :image="null" :backgroundImage="backgroundImage">
-      <div slot="content" v-if="post.ratings" class="ratings d-flex flex-column justify-content-center align-items-end mb-5">
-        <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Wetter'"><h1 class="mr-3"><BIconCloudSun variant="warning" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.weather" readonly inline no-border /></div>
-        <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Aussicht'"><h1 class="mr-3"><BIconBinoculars variant="info" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.view" readonly inline no-border /></div>
-        <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Strecke'"><h1 class="mr-3"><BIconSignpost variant="success" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.path" readonly inline no-border /></div>
+      <div slot="content" class="d-flex flex-row justify-content-between align-items-start">
+        <b-avatar-group size="60px" class="mt-3" v-if="individuals && individuals.length > 0">
+          <template v-for="individual in individuals" >
+            <b-avatar variant="primary" v-b-tooltip="individual.name" :key="`individual-photo-${individual.id}`" :src="`${storeBaseUrl}individual/${individual.id}/img`" class="align-baseline" />
+          </template>
+        </b-avatar-group>
+        <div v-if="post.ratings" class="ratings d-flex flex-column justify-content-center align-items-end mb-5">
+          <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Wetter'"><h1 class="mr-3"><BIconCloudSun variant="warning" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.weather" readonly inline no-border /></div>
+          <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Aussicht'"><h1 class="mr-3"><BIconBinoculars variant="info" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.view" readonly inline no-border /></div>
+          <div class="my-1 d-flex align-items-center" v-b-tooltip.left="'Strecke'"><h1 class="mr-3"><BIconSignpost variant="success" /></h1> <b-form-rating variant="light" size="lg" v-model="post.ratings.path" readonly inline no-border /></div>
+        </div>
       </div>
     </Header>
 
@@ -192,6 +199,23 @@ export default {
       'storeBaseUrl',
       'storeToken'
     ]),
+    individuals: function () {
+      if (this.post && this.post.hills) {
+        const result = {}
+
+        this.post.hills.forEach(h => {
+          if (h.hillIndividuals) {
+            h.hillIndividuals.forEach(hi => {
+              result[hi.individual.id] = hi.individual
+            })
+          }
+        })
+
+        return Object.values(result)
+      } else {
+        return []
+      }
+    },
     coolboxImages: function () {
       if (!this.post || !this.post.images || this.post.images.length < 1) {
         return []

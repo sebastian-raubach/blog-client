@@ -37,6 +37,17 @@
                 <b-input type="date" id="date-end" v-model="newPost.endDate" :state="formState.endDate" />
               </b-form-group>
             </b-col>
+
+            <b-col cols=12 md=6 v-if="newPost.type === 'hike'">
+              <b-form-group label="Individuen" label-for="individuals">
+                <b-button @click="$refs.individualModal.show()"><BIconPerson /> Auswählen</b-button>
+                <b-avatar-group size="60px" class="mt-3" v-if="individuals && individuals.length > 0">
+                  <template v-for="individual in individuals" >
+                    <b-avatar variant="primary" v-b-tooltip="individual.name" :key="`individual-photo-${individual.id}`" :text="getInitials(individual)" :src="`${storeBaseUrl}individual/${individual.id}/img`" class="align-baseline" />
+                  </template>
+                </b-avatar-group>
+              </b-form-group>
+            </b-col>
           </b-row>
 
           <b-button-toolbar>
@@ -208,20 +219,24 @@
     </b-container>
     <JsonModal @json-loaded="onJsonLoaded" ref="jsonModal" />
     <GpsSelectorModal @location-changed="updateHillLocation" ref="locationSelectorModal" :location="tempLocation" />
+    <IndividualModal @individuals-selected="updateIndividuals" ref="individualModal" />
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
 
+import { mapGetters } from 'vuex'
+
 import VueMarkdown from '@adapttive/vue-markdown'
 import ElevationProfile from '@/components/charts/ElevationProfile'
+import IndividualModal from '@/components/modals/IndividualModal'
 import GpsSelectorModal from '@/components/modals/GpsSelectorModal'
 import GpxMap from '@/components/GpxMap'
 import Header from '@/components/Header'
 import JsonModal from '@/components/modals/JsonModal'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
-import { BIconCheck, BIconX } from 'bootstrap-vue'
+import { BIconCheck, BIconX, BIconPerson } from 'bootstrap-vue'
 
 import { apiGetHills, apiPutPost, apiPostPostMedia } from '@/mixins/api'
 import { hillTypes } from '@/mixins/util'
@@ -238,8 +253,10 @@ export default {
   components: {
     BIconCheck,
     BIconX,
+    BIconPerson,
     ElevationProfile,
     GpsSelectorModal,
+    IndividualModal,
     GpxMap,
     Header,
     JsonModal,
@@ -267,6 +284,7 @@ export default {
         hills: null
       },
       umlauts: ['ä', 'ö', 'ü', 'ß', 'Ä', 'Ö', 'Ü'],
+      individuals: [],
       tempHill: {
         name: null,
         type: 'munro',
@@ -328,6 +346,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'storeBaseUrl'
+    ]),
     hillTypeOptions: function () {
       return Object.keys(this.hillTypes).map(h => {
         return {
@@ -351,6 +372,12 @@ export default {
   },
   mixins: [gpx],
   methods: {
+    updateIndividuals: function (individuals) {
+      this.individuals = individuals
+    },
+    getInitials: function (individual) {
+      return individual.name ? (individual.name || '').split(' ').slice(0, 2).map(p => p.substring(0, 1)).join('') : null
+    },
     deleteVideo: function (index) {
       this.newPost.videos.splice(index, 1)
     },
@@ -438,6 +465,7 @@ export default {
         title: this.newPost.title,
         visible: this.newPost.visible,
         contentMarkdown: this.newPost.description,
+        individuals: (this.newPost.type === 'hike' && this.individuals) ? this.individuals.map(i => i.id) : null,
         createdOn: new Date(this.newPost.date).toISOString(),
         endDate: this.newPost.endDate ? new Date(this.newPost.endDate).toISOString() : null,
         rating: this.newPost.rating,

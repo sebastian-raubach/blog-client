@@ -32,7 +32,9 @@ import {
   SpinnerPlugin,
   ProgressPlugin,
   FormCheckboxPlugin,
-  TooltipPlugin
+  TooltipPlugin,
+  AvatarPlugin,
+  ListGroupPlugin
 } from 'bootstrap-vue'
 
 const axiosDefaults = require('axios/lib/defaults')
@@ -43,6 +45,7 @@ Vue.use(VueGtag, {
 }, router)
 
 Vue.use(LayoutPlugin, { breakpoints: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] })
+Vue.use(AvatarPlugin)
 Vue.use(NavbarPlugin)
 Vue.use(ImagePlugin)
 Vue.use(FormPlugin)
@@ -61,6 +64,7 @@ Vue.use(MediaPlugin)
 Vue.use(FormDatepickerPlugin)
 Vue.use(FormTextareaPlugin)
 Vue.use(CardPlugin)
+Vue.use(ListGroupPlugin)
 Vue.use(ButtonToolbarPlugin)
 Vue.use(CollapsePlugin)
 Vue.use(BadgePlugin)
