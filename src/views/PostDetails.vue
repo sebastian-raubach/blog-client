@@ -29,41 +29,115 @@
 
       <b-button @click="$refs.editPostModal.show()" v-if="storeToken"><BIconPencil /> Bearbeiten</b-button>
 
-      <b-row class="pt-5" v-if="post.hills && post.hills.length > 0">
-        <b-col cols="12" md="4" v-for="hill in post.hills" :key="`hill-card-${hill.id}`" class="post-stats">
-          <b-card no-body class="hill mb-4">
-            <b-card-body>
-              <b-card-title class="text-light">{{ hill.name }}</b-card-title>
-            </b-card-body>
-            <b-row no-gutters>
-              <b-col cols="3" class="bg-dark">
-                <div class="p-3 d-flex flex-column text-center">
-                  <h4 class="d-inline"><i class="icofont-arrow-up text-primary" /></h4>
-                  <div>{{ hill.elevation }}</div>
-                </div>
-              </b-col>
-              <b-col cols="3" class="bg-dark">
-                <div class="p-3 d-flex flex-column text-center">
-                  <h4 class="d-inline"><i class="icofont-label text-primary" /></h4>
-                  <div>{{ hillTypes[hill.type].name }}</div>
-                </div>
-              </b-col>
-              <b-col cols="3" class="bg-dark">
-                <div class="p-3 d-flex flex-column text-center">
-                  <h4 class="d-inline"><i class="icofont-map text-primary" /></h4>
-                  <div><span v-if="hill.region">{{ hill.region }}</span><span v-else>--</span></div>
-                </div>
-              </b-col>
-              <b-col cols="3" class="bg-dark">
-                <div class="p-3 d-flex flex-column text-center">
-                  <h4 class="d-inline"><i class="icofont-external-link text-primary" /></h4>
-                  <div><a :href="hill.url" v-if="hill.url">Link</a><span v-else>--</span></div>
-                </div>
-              </b-col>
-            </b-row>
-          </b-card>
-        </b-col>
-      </b-row>
+      <div class="pt-5" v-if="post.hills && post.hills.length > 0">
+        <h4>Berge</h4>
+        <b-row>
+          <b-col cols="12" md="4" v-for="hill in post.hills" :key="`hill-card-${hill.id}`" class="post-stats">
+            <b-card no-body class="hill mb-4">
+              <b-row no-gutters>
+                <b-col cols=12 md="3" class="d-flex align-items-center justify-content-center bg-dark">
+                  <span :class="`${hillTypes[hill.type].icon} p-3`" :style="{ color: hillTypes[hill.type].color }" />
+                </b-col>
+                <b-col cols=12 md="9">
+                  <b-card-body>
+                    <b-card-title>{{ hill.name }}</b-card-title>
+                    <b-row>
+                      <b-col cols=12 xl=6>
+                        <b-card-text><i class="icofont-arrow-up text-primary" /> {{ hill.elevation }}</b-card-text>
+                      </b-col>
+                      <b-col cols=12 xl=6>
+                        <b-card-text><i class="icofont-label text-primary" /> {{ hillTypes[hill.type].name }}</b-card-text>
+                      </b-col>
+                      <b-col cols=12 xl=6>
+                        <b-card-text><i class="icofont-map text-primary" /> <span v-if="hill.region">{{ hill.region }}</span><span v-else>--</span></b-card-text>
+                      </b-col>
+                      <b-col cols=12 xl=6>
+                        <b-card-text><i class="icofont-external-link text-primary" /> <a :href="hill.url" v-if="hill.url">Link</a><span v-else>--</span></b-card-text>
+                      </b-col>
+                    </b-row>
+                  </b-card-body>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+      </div>
+
+      <div class="pt-5" v-if="(post.sites && post.sites.length > 0) || storeToken">
+        <h4>Standorte</h4>
+
+        <b-button @click="$refs.addSiteModal.show()" v-if="storeToken"><BIconPencil /> Hinzufügen</b-button>
+
+        <b-row>
+          <b-col cols="12" md="6" v-for="site in post.sites" :key="`site-card-${site.id}`" class="post-stats mb-4">
+            <b-card no-body class="hill h-100">
+              <b-row no-gutters class="h-100">
+                <b-col cols=12 md="3" class="d-flex align-items-center justify-content-center bg-dark">
+                  <CampsiteIcon class="camp-icon p-5 w-100 h-100 text-info" v-if="site.sitetype === 'campsite'" />
+                  <WildcampIcon class="camp-icon p-5 w-100 h-100 text-success" v-if="site.sitetype === 'wildcamp'" />
+                </b-col>
+                <b-col cols=12 md="9">
+                  <b-card-body class="d-flex flex-column justify-content-between h-100">
+                    <div>
+                      <b-card-title>{{ site.name }}</b-card-title>
+                      <b-card-text class="text-nowrap text-truncate mb-3" :title="site.description" v-if="site.description">{{ site.description }}</b-card-text>
+                    </div>
+                    <div>
+                      <b-row>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Typ</b-card-sub-title>
+                          <b-card-text class="mx-2">{{ siteTypes[site.sitetype] }}</b-card-text>
+                        </b-col>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Untergrund</b-card-sub-title>
+                          <b-card-text class="mx-2">{{ groundTypes[site.groundtype] }}</b-card-text>
+                        </b-col>
+                      </b-row>
+                      <hr class="mt-0" />
+                      <b-row>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Standort</b-card-sub-title>
+                          <b-card-text><b-form-rating variant="light" size="sm" v-model="site.rating.location" readonly inline no-border /></b-card-text>
+                        </b-col>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Aussicht</b-card-sub-title>
+                          <b-card-text><b-form-rating variant="light" size="sm" v-model="site.rating.scenery" readonly inline no-border /></b-card-text>
+                        </b-col>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Ausstattung</b-card-sub-title>
+                          <b-card-text><b-form-rating variant="light" size="sm" v-model="site.rating.facilities" readonly inline no-border /></b-card-text>
+                        </b-col>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Preis</b-card-sub-title>
+                          <b-card-text><b-form-rating variant="light" size="sm" v-model="site.rating.price" readonly inline no-border /></b-card-text>
+                        </b-col>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Annehmlichkeiten</b-card-sub-title>
+                          <b-card-text class="mx-2">
+                            <ShowerIcon :class="`pr-2 ${site.facilities.showers ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Duschen'" />
+                            <ToiletIcon :class="`pr-2 ${site.facilities.toilets ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Toiletten'" />
+                            <ElectricHookupIcon :class="`pr-2 ${site.facilities.electricHookup ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Strom'" />
+                            <ShopIcon :class="`pr-2 ${site.facilities.shop ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Shop'" />
+                            <RestaurantIcon :class="`pr-2 ${site.facilities.restaurant ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Restaurant'" />
+                            <CafeIcon :class="`pr-2 ${site.facilities.cafe ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Café'" />
+                            <DogWalkIcon :class="`pr-2 ${site.facilities.localDogWalk ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Hundespaziergang'" />
+                          </b-card-text>
+                        </b-col>
+                        <b-col cols=12 xl=6 class="mb-2">
+                          <b-card-sub-title>Lage</b-card-sub-title>
+                          <b-card-text class="mx-2">
+                            <i class="icofont icofont-google-map" /> <a :href="`https://geohack.toolforge.org/geohack.php?params=${site.latitude};${site.longitude}`">{{ site.latitude.toFixed(4) }}; {{ site.longitude.toFixed(4) }}</a>
+                          </b-card-text>
+                        </b-col>
+                      </b-row>
+                    </div>
+                  </b-card-body>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+      </div>
 
       <div class="pt-5" v-html="post.content" v-if="post.content" />
       <VueMarkdown class="pt-5" :source="post.contentMarkdown" v-else-if="post.contentMarkdown" />
@@ -142,7 +216,8 @@
 
     <RelatedPostModal v-if="storeToken" ref="relatedPostModal" @related-posts-selected="addRelatedPosts" />
 
-    <EditPostModal :post="post" ref="editPostModal" @changed="update(post.id)" />
+    <EditPostModal :post="post" ref="editPostModal" @changed="update(post.id)" v-if="storeToken" />
+    <AddSiteModal :post="post" ref="addSiteModal" @changed="update(post.id)" v-if="storeToken" />
   </div>
 </template>
 
@@ -151,6 +226,15 @@ import VueMarkdown from '@adapttive/vue-markdown'
 import CoolLightBox from 'vue-cool-lightbox'
 import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 
+import CampsiteIcon from '@/components/icons/CampsiteIcon'
+import WildcampIcon from '@/components/icons/WildcampIcon'
+import ShowerIcon from '@/components/icons/ShowerIcon'
+import ToiletIcon from '@/components/icons/ToiletIcon'
+import ShopIcon from '@/components/icons/ShopIcon'
+import RestaurantIcon from '@/components/icons/RestaurantIcon'
+import ElectricHookupIcon from '@/components/icons/ElectricHookupIcon'
+import CafeIcon from '@/components/icons/CafeIcon'
+import DogWalkIcon from '@/components/icons/DogWalkIcon'
 import ElevationProfile from '@/components/charts/ElevationProfile'
 import GpxMap from '@/components/GpxMap'
 import Header from '@/components/Header'
@@ -158,6 +242,7 @@ import PostCard from '@/components/PostCard'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 import RelatedPostModal from '@/components/modals/RelatedPostModal'
 import EditPostModal from '@/components/modals/EditPostModal'
+import AddSiteModal from '@/components/modals/AddSiteModal'
 
 import { apiGetGpx, apiGetTimeDistanceProfile, apiGetElevationProfile, apiPostRelatedPostIds, apiGetPostRelated, apiGetPost, apiPostStoryList } from '@/mixins/api'
 import { mapGetters } from 'vuex'
@@ -174,7 +259,17 @@ export default {
     BIconBinoculars,
     BIconPencil,
     BIconSignpost,
+    WildcampIcon,
+    CampsiteIcon,
+    ShowerIcon,
+    ToiletIcon,
+    ShopIcon,
+    DogWalkIcon,
+    RestaurantIcon,
+    ElectricHookupIcon,
+    CafeIcon,
     EditPostModal,
+    AddSiteModal,
     CoolLightBox,
     ElevationProfile,
     GpxMap,
@@ -187,6 +282,7 @@ export default {
   data: function () {
     return {
       hillTypes,
+      amenitiesVisible: false,
       post: null,
       gpxContent: null,
       tdProfileContent: null,
@@ -201,6 +297,20 @@ export default {
       'storeBaseUrl',
       'storeToken'
     ]),
+    siteTypes: function () {
+      return {
+        campsite: 'Campingplatz',
+        wildcamp: 'Wild-Zelten'
+      }
+    },
+    groundTypes: function () {
+      return {
+        gravel: 'Kies',
+        grass: 'Gras',
+        paved: 'Befestigt',
+        sand: 'Sand'
+      }
+    },
     individuals: function () {
       if (this.post && this.post.hills) {
         const result = {}
@@ -310,6 +420,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.camp-icon {
+  max-width: 200px;
+}
+</style>
 
 <style>
 .hike-stats .card-title {

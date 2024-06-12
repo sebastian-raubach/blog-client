@@ -32,6 +32,10 @@ export default {
     location: {
       type: Object,
       default: () => null
+    },
+    elevationRequired: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {
@@ -43,7 +47,7 @@ export default {
   },
   computed: {
     enabled: function () {
-      return this.latitude !== null && this.longitude !== null && this.elevation !== null
+      return this.latitude !== null && this.longitude !== null && (!this.elevationRequired || this.elevation !== null)
     }
   },
   methods: {

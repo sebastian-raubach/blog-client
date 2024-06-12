@@ -254,6 +254,9 @@ const apiPostIndividual = (formData, onSuccess, onError) => {
 const apiGetIndividuals = (onSuccess, onError) => {
   return axiosCall({ url: 'individual', success: onSuccess, error: onError })
 }
+const apiPostSite = (postId, data, onSuccess, onError) => {
+  return axiosCall({ url: `post/${postId}/site`, method: 'post', data: data, success: onSuccess, error: onError })
+}
 
 /**
  * Returns the current authentication token
@@ -298,5 +301,6 @@ export {
   apiGetSettings,
   getToken,
   apiPostIndividual,
-  apiGetIndividuals
+  apiGetIndividuals,
+  apiPostSite
 }
