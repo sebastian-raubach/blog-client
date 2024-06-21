@@ -230,6 +230,9 @@ const apiGetStories = (params, onSuccess, onError) => {
 const apiGetHills = (name, onSuccess, onError) => {
   return axiosCall({ url: 'hill', params: { name: name }, success: onSuccess, error: onError })
 }
+const apiGetSites = (name, onSuccess, onError) => {
+  return axiosCall({ url: 'site', params: { name: name }, success: onSuccess, error: onError })
+}
 const apiPutStory = (data, onSuccess, onError) => {
   return axiosCall({ url: 'import/story', method: 'put', data: data, success: onSuccess, error: onError })
 }
@@ -293,6 +296,7 @@ export {
   apiGetPosts,
   apiGetStories,
   apiGetHills,
+  apiGetSites,
   apiPutStory,
   apiPutStoryPosts,
   apiGetPostRelated,

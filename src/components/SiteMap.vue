@@ -1,25 +1,20 @@
 <template>
   <div>
-    <div :id="`map-${id}`" class="hill-map" />
+    <div :id="`map-${id}`" class="site-map" />
 
-    <div v-if="hill" ref="popupContent" class="p-3">
-      <h4>{{ hill.name }}</h4>
-      <h5><b-badge :style="`color: white; background-color: ${hillTypes[hill.type].color}`"><i class="icofont-google-map"/> {{ hill.type }}</b-badge></h5>
-
-      <b-card class="my-2" v-for="post in hill.posts" :key="`hill-${hill.id}-post-${post.id}`">
-        <h5>{{ post.title }}</h5>
-        <h6 class="my-2"><b-badge>{{ new Date(post.createdOn).toLocaleDateString() }}</b-badge></h6>
-        <router-link class="d-block text-white" :to="{ name: 'post-details', params: { postId: post.id } }">Bericht lesen</router-link>
-      </b-card>
+    <div v-if="site" ref="popupContent">
+      <SiteCard :site="site" />
     </div>
   </div>
 </template>
 
 <script>
+import SiteCard from '@/components/SiteCard'
+
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-import { uuidv4, hillTypes } from '@/mixins/util'
+import { uuidv4 } from '@/mixins/util'
 
 // Set the leaflet marker icon
 delete L.Icon.Default.prototype._getIconUrl
@@ -31,39 +26,23 @@ L.Icon.Default.mergeOptions({
 
 export default {
   props: {
-    hills: {
+    sites: {
       type: Array,
       default: () => []
     }
   },
+  components: {
+    SiteCard
+  },
   data: function () {
     const id = uuidv4()
     return {
-      hillTypes,
       id: id,
-      hill: null
-    }
-  },
-  computed: {
-    hillIcons: function () {
-      const result = {}
-
-      Object.keys(this.hillTypes).forEach(k => {
-        const hill = this.hillTypes[k]
-
-        result[k] = L.divIcon({
-          html: `<i class="icofont-google-map icofont-3x" style="color: ${hill.color}"/>`,
-          iconSize: [36, 40],
-          iconAnchor: [18, 36],
-          popupAnchor: [0, -36]
-        })
-      })
-
-      return result
+      site: null
     }
   },
   watch: {
-    hills: function () {
+    sites: function () {
       this.update()
     }
   },
@@ -76,17 +55,18 @@ export default {
 
       this.markers.forEach(m => this.map.removeLayer(m))
 
-      if (this.hills) {
+      if (this.sites) {
         const latLngBounds = L.latLngBounds()
-        this.hills.forEach(m => {
+        this.sites.forEach(m => {
           const latLng = [m.latitude, m.longitude]
-          const marker = L.marker(latLng, { icon: this.hillIcons[m.type] }).bindPopup('')
+          const marker = L.marker(latLng).bindPopup('')
           marker.on('click', e => {
             const popup = e.target.getPopup()
-            this.hill = m
+            this.site = m
             this.$nextTick(() => popup.setContent(this.$refs.popupContent))
           })
           latLngBounds.extend(latLng)
+
           marker.addTo(this.map)
           this.markers.push(marker)
         })
@@ -122,7 +102,7 @@ export default {
 
     L.control.layers(baseMaps).addTo(this.map)
 
-    if (this.hills) {
+    if (this.sites) {
       this.update()
     }
   }
@@ -130,27 +110,28 @@ export default {
 </script>
 
 <style scoped>
-.hill-map {
+.site-map {
   height: 90vh;
 }
 </style>
 <style>
-.hill-map .leaflet-popup-content-wrapper {
+.site-map .leaflet-popup-content-wrapper {
+  background: transparent;
   padding: 0;
   border-radius: 0;
 }
-.hill-map .leaflet-popup-content {
+.site-map .leaflet-popup-content {
   margin: 0;
-  width: min(50vw, 300px) !important;
+  width: min(50vw, 600px) !important;
 }
-.hill-map .leaflet-popup-content .v-btn {
+.site-map .leaflet-popup-content .v-btn {
   border-radius: 0;
 }
 
-.hill-map .leaflet-container .leaflet-marker-pane img.marker-image {
+.site-map .leaflet-container .leaflet-marker-pane img.marker-image {
   width: inherit;
 }
-.hill-map .leaflet-div-icon {
+.site-map .leaflet-div-icon {
   background: transparent;
   border: 0;
 }
