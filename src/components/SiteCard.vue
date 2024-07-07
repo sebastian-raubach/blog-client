@@ -50,6 +50,7 @@
                   <RestaurantIcon :class="`pr-2 ${site.facilities.restaurant ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Restaurant'" />
                   <CafeIcon :class="`pr-2 ${site.facilities.cafe ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Café'" />
                   <DogWalkIcon :class="`pr-2 ${site.facilities.localDogWalk ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Hundespaziergang'" />
+                  <WifiIcon :class="`pr-2 ${site.facilities.wifi ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Internet'" />
                 </b-card-text>
               </b-col>
               <b-col cols=12 xl=6 class="mb-2">
@@ -76,6 +77,7 @@ import RestaurantIcon from '@/components/icons/RestaurantIcon'
 import ElectricHookupIcon from '@/components/icons/ElectricHookupIcon'
 import CafeIcon from '@/components/icons/CafeIcon'
 import DogWalkIcon from '@/components/icons/DogWalkIcon'
+import WifiIcon from '@/components/icons/WifiIcon'
 
 export default {
   props: {
@@ -86,6 +88,7 @@ export default {
   },
   components: {
     CampsiteIcon,
+    WifiIcon,
     WildcampIcon,
     ShowerIcon,
     ToiletIcon,

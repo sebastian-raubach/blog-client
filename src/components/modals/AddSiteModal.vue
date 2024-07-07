@@ -89,6 +89,11 @@
               <b-form-checkbox switch id="localDogWalk" v-model="newSite.facilities.localDogWalk" :state="formState.facilities.localDogWalk" />
             </b-form-group>
           </b-col>
+          <b-col cols="12" md="6" lg="3" xl="2">
+            <b-form-group label-for="wifi" label="Internet">
+              <b-form-checkbox switch id="wifi" v-model="newSite.facilities.wifi" :state="formState.facilities.wifi" />
+            </b-form-group>
+          </b-col>
         </b-row>
       </div>
     </b-form>
@@ -138,7 +143,8 @@ export default {
           toilets: null,
           restaurant: null,
           electricHookup: null,
-          localDogWalk: null
+          localDogWalk: null,
+          wifi: null
         }
       },
       newSite: {
@@ -162,7 +168,8 @@ export default {
           toilets: false,
           restaurant: false,
           electricHookup: false,
-          localDogWalk: false
+          localDogWalk: false,
+          wifi: false
         }
       }
     }
@@ -197,7 +204,8 @@ export default {
           toilets: this.newSite.facilities.toilets !== undefined && this.newSite.facilities.toilets !== null,
           restaurant: this.newSite.facilities.restaurant !== undefined && this.newSite.facilities.restaurant !== null,
           electricHookup: this.newSite.facilities.electricHookup !== undefined && this.newSite.facilities.electricHookup !== null,
-          localDogWalk: this.newSite.facilities.localDogWalk !== undefined && this.newSite.facilities.localDogWalk !== null
+          localDogWalk: this.newSite.facilities.localDogWalk !== undefined && this.newSite.facilities.localDogWalk !== null,
+          wifi: this.newSite.facilities.wifi !== undefined && this.newSite.facilities.wifi !== null
         }
       }
 
@@ -244,7 +252,8 @@ export default {
             toilets: false,
             restaurant: false,
             electricHookup: false,
-            localDogWalk: false
+            localDogWalk: false,
+            wifi: false
           }
         }
       }
@@ -271,7 +280,8 @@ export default {
           toilets: null,
           restaurant: null,
           electricHookup: null,
-          localDogWalk: null
+          localDogWalk: null,
+          wifi: null
         }
       }
 
