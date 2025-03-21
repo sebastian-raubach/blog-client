@@ -96,9 +96,9 @@
           </b-input-group>
         </div>
 
-        <template v-if="newPost.type === 'hike'">
+        <template>
           <hr />
-          <div class="my-5" id="hills">
+          <div class="my-5" id="hills" v-if="newPost.type === 'hike'">
             <h4>Berge</h4>
 
             <b-card no-body v-for="(hill, index) in newPost.hills" :key="`hill-${index}`" class="my-4" :border-variant="formState.hills === false ? 'danger' : null">
@@ -138,11 +138,11 @@
             <b-button :disabled="!tempHill.name || !tempHill.type" variant="success" @click="addHill"><i class="icofont-plus" /></b-button>
           </div>
 
-          <hr />
+          <hr v-if="newPost.type === 'hike'" />
           <div class="my-5" id="hills">
             <h4>GPX und Höhenprofil</h4>
 
-            <b-form-group label-for="gpx" label="GPX" :description="gpx.simplified ? `Vereinfacht von ${gpx.originalLength} auf ${gpx.simplified.length}` : null">
+            <b-form-group label-for="gpx" label="GPX" :description="gpx.simplified ? `Vereinfacht von ${gpx.originalLength} auf ${gpx.simplifiedLength}` : null">
               <b-form-file id="gpx" v-model="newPost.gpxFile" accept=".gpx" @input="resetGpxStats" required :state="formState.gpx" />
             </b-form-group>
 
@@ -168,9 +168,9 @@
             </b-row>
           </div>
 
-          <hr />
+          <hr v-if="newPost.type === 'hike'" />
 
-          <div class="my-5">
+          <div class="my-5" v-if="newPost.type === 'hike'">
             <h4>Bewertung</h4>
             <b-row>
               <b-col cols="12" md="4">
@@ -191,9 +191,9 @@
             </b-row>
           </div>
 
-          <hr />
+          <hr v-if="newPost.type === 'hike'" />
 
-          <div class="my-5">
+          <div class="my-5" v-if="newPost.type === 'hike'">
             <h4>Statistiken</h4>
             <b-row>
               <b-col cols="12" md="4">
@@ -415,11 +415,19 @@ export default {
       }
     },
     simplifyGpx: function () {
-      const points = this.gpxLoadPoints(this.newPost.gpxContent)
-      this.gpx.originalLength = points.length
-      this.gpx.simplified = this.gpxSimplify(points, 0.00005)
+      const tracks = this.gpxLoadPoints(this.newPost.gpxContent)
+
+      this.gpx.originalLength = tracks.map(t => t.length).reduce((a, b) => a + b, 0)
+      this.gpx.simplified = tracks.map(t => this.gpxSimplify(t, 0.00005))
+      this.gpx.simplifiedLength = this.gpx.simplified.map(t => t.length).reduce((a, b) => a + b, 0)
       const simplifiedContent = this.gpxPointsToGpx(this.gpx.simplified)
       this.newPost.gpxFile = new File([simplifiedContent], 'simplified-gpx.gpx', { type: 'application/gpx+xml' })
+
+      // const points = this.gpxLoadPoints(this.newPost.gpxContent)
+      // this.gpx.originalLength = points.length
+      // this.gpx.simplified = this.gpxSimplify(points, 0.00005)
+      // const simplifiedContent = this.gpxPointsToGpx(this.gpx.simplified)
+      // this.newPost.gpxFile = new File([simplifiedContent], 'simplified-gpx.gpx', { type: 'application/gpx+xml' })
     },
     addHill: function () {
       this.newPost.hills.push(JSON.parse(JSON.stringify(this.tempHill)))

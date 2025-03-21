@@ -3,10 +3,8 @@
     <Header :title="post.title" :message="null" :image="null" :backgroundImage="backgroundImage">
       <div slot="content" class="d-flex flex-row justify-content-between align-items-start">
         <div>
-          <b-avatar-group size="60px" class="mt-3" v-if="individuals && individuals.length > 0">
-            <template v-for="individual in individuals" >
-              <b-avatar variant="primary" v-b-tooltip="individual.name" :key="`individual-photo-${individual.id}`" :src="`${storeBaseUrl}individual/${individual.id}/img`" class="align-baseline" />
-            </template>
+          <b-avatar-group size="60px" class="mt-3" v-if="post.postIndividuals && post.postIndividuals.length > 0">
+            <b-avatar v-for="individual in post.postIndividuals"  variant="primary" v-b-tooltip="individual.individual.name" :key="`individual-photo-${individual.individual.id}`" :src="`${storeBaseUrl}individual/${individual.individual.id}/img`" class="align-baseline" />
           </b-avatar-group>
         </div>
         <div v-if="post.ratings" class="ratings d-flex flex-column justify-content-center align-items-end mb-5">
@@ -217,23 +215,6 @@ export default {
       'storeBaseUrl',
       'storeToken'
     ]),
-    individuals: function () {
-      if (this.post && this.post.hills) {
-        const result = {}
-
-        this.post.hills.forEach(h => {
-          if (h.hillIndividuals) {
-            h.hillIndividuals.forEach(hi => {
-              result[hi.individual.id] = hi.individual
-            })
-          }
-        })
-
-        return Object.values(result)
-      } else {
-        return []
-      }
-    },
     coolboxImages: function () {
       if (!this.post || !this.post.images || this.post.images.length < 1) {
         return []

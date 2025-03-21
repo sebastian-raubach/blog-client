@@ -66,7 +66,7 @@ export default {
         },
         async: true,
         polyline_options: {
-          color: '#E74C3C',
+          color: '#0079ed',
           opacity: 0.75,
           lineCap: 'round',
           lineJoin: 'round',

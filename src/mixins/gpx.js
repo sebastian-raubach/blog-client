@@ -1,3 +1,5 @@
+import { Segment, Track } from 'gpx-builder/dist/builder/BaseBuilder/models'
+
 const GpxParser = require('gpxparser')
 const { buildGPX, BaseBuilder } = require('gpx-builder')
 
@@ -10,16 +12,20 @@ export default {
       p.parse(gpx)
       return p.toGeoJSON()
     },
-    gpxGetStats: function (points) {
+    gpxGetStats: function (tracks) {
       let distance = 0
       let ascent = 0
-      const duration = (points[points.length - 1].time - points[0].time) / 1000 / 60
+      let duration = 0
 
-      for (let i = 1; i < points.length; i++) {
-        const haversine = this.gpxHaversine(points[i - 1], points[i])
-        distance += haversine
-        ascent += Math.max(0, points[i - 1].ele - points[i].ele)
-      }
+      tracks.forEach(t => {
+        duration += (t[t.length - 1].time - t[0].time) / 1000 / 60
+
+        for (let i = 1; i < t.length; i++) {
+          const haversine = this.gpxHaversine(t[i - 1], t[i])
+          distance += haversine
+          ascent += Math.max(0, t[i - 1].ele - t[i].ele)
+        }
+      })
 
       return {
         distance: Math.round(distance * 100) / 100,
@@ -27,17 +33,25 @@ export default {
         duration: Math.round(duration)
       }
     },
-    gpxPointsToGpx: function (points) {
-      const gpxPoints = points.map(p => {
-        return new Point(p.lat, p.lon, {
-          ele: p.ele,
-          time: p.time
-        })
-      })
-
+    gpxPointsToGpx: function (tracks) {
       const builder = new BaseBuilder()
 
-      builder.setSegmentPoints(gpxPoints)
+      const ts = []
+      tracks.forEach(t => {
+        const track = new Track()
+        const segment = new Segment()
+        const gpxPoints = t.map(p => {
+          return new Point(p.lat, p.lon, {
+            ele: p.ele,
+            time: p.time
+          })
+        })
+        segment.setPoints(gpxPoints)
+        track.setSegments([segment])
+        ts.push(track)
+      })
+
+      builder.setTracks(ts)
 
       return buildGPX(builder.toObject())
     },
@@ -57,20 +71,22 @@ export default {
       const p = new GpxParser()
       p.parse(file)
 
-      let points = []
+      const tracks = []
       if (p.tracks && p.tracks.length > 0) {
-        const track = p.tracks[0]
-        if (track.points && track.points.length > 0) {
-          points = [...track.points]
-        }
+        p.tracks.forEach(t => {
+          if (t.points && t.points.length > 0) {
+            tracks.push(t.points)
+          }
+        })
       } else if (p.routes && p.routes.length > 0) {
-        const route = p.routes[0]
-        if (route.points && route.points.length > 0) {
-          points = [...route.points]
-        }
+        p.routes.forEach(r => {
+          if (r.points && r.points.length > 0) {
+            tracks.push(r.points)
+          }
+        })
       }
 
-      return points
+      return tracks
     },
     gpxGetSqDist: function (p1, p2) {
       const dx = p1.lat - p2.lat

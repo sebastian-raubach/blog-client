@@ -100,7 +100,7 @@ export default {
 .post-card img {
   transition: all 0.15s linear;
   object-fit: cover;
-  max-width: 100%;
+  width: 100%;
   height: 100%;
 }
 
