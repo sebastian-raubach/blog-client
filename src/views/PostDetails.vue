@@ -76,6 +76,8 @@
       <div class="pt-5" v-html="post.content" v-if="post.content" />
       <VueMarkdown class="pt-5" :source="post.contentMarkdown" v-else-if="post.contentMarkdown" />
 
+      <b-button @click="$refs.editImageModal.show()" v-if="storeToken"><BIconPencil /> Bearbeiten</b-button>
+
       <b-carousel
         v-if="post.images && post.images.length > 0"
         class="mt-5"
@@ -151,6 +153,7 @@
     <RelatedPostModal v-if="storeToken" ref="relatedPostModal" @related-posts-selected="addRelatedPosts" />
 
     <EditPostModal :post="post" ref="editPostModal" @changed="update(post.id)" v-if="storeToken" />
+    <EditImageModal :post="post" ref="editImageModal" @changed="update(post.id)" v-if="storeToken" />
     <AddSiteModal :post="post" ref="addSiteModal" @changed="update(post.id)" v-if="storeToken" />
   </div>
 </template>
@@ -168,6 +171,7 @@ import PostCard from '@/components/PostCard'
 import TimeDistanceProfile from '@/components/charts/TimeDistanceProfile'
 import RelatedPostModal from '@/components/modals/RelatedPostModal'
 import EditPostModal from '@/components/modals/EditPostModal'
+import EditImageModal from '@/components/modals/EditImageModal'
 import AddSiteModal from '@/components/modals/AddSiteModal'
 
 import { apiGetGpx, apiGetTimeDistanceProfile, apiGetElevationProfile, apiPostRelatedPostIds, apiGetPostRelated, apiGetPost, apiPostStoryList } from '@/mixins/api'
@@ -186,6 +190,7 @@ export default {
     BIconPencil,
     BIconSignpost,
     SiteCard,
+    EditImageModal,
     EditPostModal,
     AddSiteModal,
     CoolLightBox,

@@ -143,7 +143,7 @@
             <h4>GPX und Höhenprofil</h4>
 
             <b-form-group label-for="gpx" label="GPX" :description="gpx.simplified ? `Vereinfacht von ${gpx.originalLength} auf ${gpx.simplifiedLength}` : null">
-              <b-form-file id="gpx" v-model="newPost.gpxFile" accept=".gpx" @input="resetGpxStats" required :state="formState.gpx" />
+              <b-form-file id="gpx" v-model="newPost.gpxFile" accept=".gpx" @input="resetGpxStats" :required="newPost.type === 'hike'" :state="formState.gpx" />
             </b-form-group>
 
             <div class="text-center"><b-button @click="simplifyGpx" :disabled="gpx.simplified !== null"><i class="icofont-swoosh-down" /></b-button></div>

@@ -200,6 +200,9 @@ const apiPutPost = (data, onSuccess, onError) => {
 const apiPatchPost = (postId, data, onSuccess, onError) => {
   return axiosCall({ url: `post/${postId}`, method: 'patch', data: data, success: onSuccess, error: onError })
 }
+const apiPatchPostImages = (postId, data, onSuccess, onError) => {
+  return axiosCall({ url: `post/media/${postId}/`, method: 'patch', data: data, success: onSuccess, error: onError })
+}
 const apiPostPostMedia = (postId, formData, onSuccess, onError) => {
   return axiosCall({ url: `post/media/${postId}`, method: 'post', contentType: 'multipart/form-data', data: formData, success: onSuccess, error: onError })
 }
@@ -286,6 +289,7 @@ export {
   apiPostToken,
   apiPutPost,
   apiPatchPost,
+  apiPatchPostImages,
   apiPostPostMedia,
   apiGetGpx,
   apiGetTimeDistanceProfile,
