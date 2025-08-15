@@ -45,6 +45,13 @@ const hillTypes = {
     count: 573,
     iconSize: [12, 14]
   },
+  hewitt: {
+    name: 'Hewitt',
+    icon: 'icofont-hill icofont-3x',
+    color: '#C4E538',
+    count: 316,
+    iconSize: [36, 40]
+  },
   other: {
     name: 'None',
     icon: 'icofont-ban icofont-1x',
