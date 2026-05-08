@@ -263,6 +263,9 @@ const apiGetIndividuals = (onSuccess, onError) => {
 const apiPostSite = (postId, data, onSuccess, onError) => {
   return axiosCall({ url: `post/${postId}/site`, method: 'post', data: data, success: onSuccess, error: onError })
 }
+const apiPostSiteWithId = (postId, siteId, type, onSuccess, onError) => {
+  return axiosCall({ url: `post/${postId}/site/${siteId}`, method: 'post', data: type, success: onSuccess, error: onError })
+}
 
 /**
  * Returns the current authentication token
@@ -310,5 +313,6 @@ export {
   getToken,
   apiPostIndividual,
   apiGetIndividuals,
-  apiPostSite
+  apiPostSite,
+  apiPostSiteWithId
 }

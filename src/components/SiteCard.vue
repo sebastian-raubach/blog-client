@@ -18,8 +18,10 @@
                 <b-card-text class="mx-2">{{ siteTypes[site.sitetype] }}</b-card-text>
               </b-col>
               <b-col cols=12 xl=6 class="mb-2">
-                <b-card-sub-title>Untergrund</b-card-sub-title>
-                <b-card-text class="mx-2">{{ groundTypes[site.groundtype] }}</b-card-text>
+                <template v-if="showGroundType">
+                  <b-card-sub-title>Untergrund</b-card-sub-title>
+                  <b-card-text class="mx-2">{{ groundTypes[site.groundtype] }}</b-card-text>
+                </template>
               </b-col>
             </b-row>
             <hr class="mt-0" />
@@ -84,6 +86,10 @@ export default {
     site: {
       type: Object,
       default: () => null
+    },
+    showGroundType: {
+      type: Boolean,
+      default: true
     }
   },
   components: {

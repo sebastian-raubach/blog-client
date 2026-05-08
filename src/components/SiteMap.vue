@@ -3,7 +3,7 @@
     <div :id="`map-${id}`" class="site-map" />
 
     <div v-if="site" ref="popupContent">
-      <SiteCard :site="site" />
+      <SiteCard :site="site" :show-ground-type="false" />
     </div>
   </div>
 </template>

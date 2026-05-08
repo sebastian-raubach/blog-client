@@ -1,22 +1,116 @@
 <template>
   <b-modal ref="modal" size="xl" title="Standort hinzufügen" ok-title="Hinzufügen" cancel-title="Abbrechen" @ok.prevent="onSubmit">
     <b-form @submit.prevent="onSubmit" :validated="formValidated" v-if="post">
+      <b-form-group>
+        <b-form-checkbox-group
+          v-model="isNew"
+          buttons
+        >
+          <b-form-checkbox :value="true">Neu</b-form-checkbox>
+          <b-form-checkbox :value="false">Existierend</b-form-checkbox>
+        </b-form-checkbox-group>
+      </b-form-group>
+
       <div class="my-5">
-        <h4>Details</h4>
-        <b-row>
+        <template v-if="isNew">
+          <h4>Details</h4>
+          <b-row>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="name" label="Name">
+                <b-form-input required id="name" v-model="newSite.name" :state="formState.name" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="description" label="Beschreibung">
+                <b-form-textarea required id="description" v-model="newSite.description" :state="formState.description" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="sitetype" label="Typ">
+                <b-form-select :options="siteTypeOptions" required id="sitetype" v-model="newSite.sitetype" :state="formState.sitetype" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="groundtype" label="Untergrund">
+                <b-form-select :options="groundTypeOptions" required id="groundtype" v-model="newSite.groundtype" :state="formState.groundtype" />
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+          <b-button @click="$refs.locationSelectorModal.show()">Standort angeben</b-button>
+
+          <h4>Bewertung</h4>
+          <b-row>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="location" label="Standort">
+                <b-form-rating id="location" variant="warning" v-model="newSite.rating.location" required :state="formState.rating.location" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="scenery" label="Aussicht">
+                <b-form-rating id="scenery" variant="warning" v-model="newSite.rating.scenery" required :state="formState.rating.scenery" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="facilities" label="Ausstattung">
+                <b-form-rating id="facilities" variant="warning" v-model="newSite.rating.facilities" required :state="formState.rating.facilities" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3">
+              <b-form-group label-for="price" label="Preis">
+                <b-form-rating id="price" variant="warning" v-model="newSite.rating.price" required :state="formState.rating.price" />
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+          <h4>Annehmlichkeiten</h4>
+          <b-row>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="showers" label="Duschen">
+                <b-form-checkbox switch id="showers" v-model="newSite.facilities.showers" :state="formState.facilities.showers" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="toilets" label="Toiletten">
+                <b-form-checkbox switch id="toilets" v-model="newSite.facilities.toilets" :state="formState.facilities.toilets" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="shop" label="Shop">
+                <b-form-checkbox switch id="shop" v-model="newSite.facilities.shop" :state="formState.facilities.shop" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="restaurant" label="Restaurant">
+                <b-form-checkbox switch id="restaurant" v-model="newSite.facilities.restaurant" :state="formState.facilities.restaurant" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="electricHookup" label="Strom">
+                <b-form-checkbox switch id="electricHookup" v-model="newSite.facilities.electricHookup" :state="formState.facilities.electricHookup" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="cafe" label="Café">
+                <b-form-checkbox switch id="cafe" v-model="newSite.facilities.cafe" :state="formState.facilities.cafe" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="localDogWalk" label="Hundespaziergang">
+                <b-form-checkbox switch id="localDogWalk" v-model="newSite.facilities.localDogWalk" :state="formState.facilities.localDogWalk" />
+              </b-form-group>
+            </b-col>
+            <b-col cols="12" md="6" lg="3" xl="2">
+              <b-form-group label-for="wifi" label="Internet">
+                <b-form-checkbox switch id="wifi" v-model="newSite.facilities.wifi" :state="formState.facilities.wifi" />
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </template>
+        <template v-else>
           <b-col cols="12" md="6" lg="3">
-            <b-form-group label-for="name" label="Name">
-              <b-form-input required id="name" v-model="newSite.name" :state="formState.name" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3">
-            <b-form-group label-for="description" label="Beschreibung">
-              <b-form-textarea required id="description" v-model="newSite.description" :state="formState.description" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3">
-            <b-form-group label-for="sitetype" label="Typ">
-              <b-form-select :options="siteTypeOptions" required id="sitetype" v-model="newSite.sitetype" :state="formState.sitetype" />
+            <b-form-group label-for="site" label="Standort">
+              <b-form-select v-model="siteId" :options="siteOptions" :state="formState.name" />
             </b-form-group>
           </b-col>
           <b-col cols="12" md="6" lg="3">
@@ -24,77 +118,7 @@
               <b-form-select :options="groundTypeOptions" required id="groundtype" v-model="newSite.groundtype" :state="formState.groundtype" />
             </b-form-group>
           </b-col>
-        </b-row>
-
-        <b-button @click="$refs.locationSelectorModal.show()">Standort angeben</b-button>
-
-        <h4>Bewertung</h4>
-        <b-row>
-          <b-col cols="12" md="6" lg="3">
-            <b-form-group label-for="location" label="Standort">
-              <b-form-rating id="location" variant="warning" v-model="newSite.rating.location" required :state="formState.rating.location" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3">
-            <b-form-group label-for="scenery" label="Aussicht">
-              <b-form-rating id="scenery" variant="warning" v-model="newSite.rating.scenery" required :state="formState.rating.scenery" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3">
-            <b-form-group label-for="facilities" label="Ausstattung">
-              <b-form-rating id="facilities" variant="warning" v-model="newSite.rating.facilities" required :state="formState.rating.facilities" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3">
-            <b-form-group label-for="price" label="Preis">
-              <b-form-rating id="price" variant="warning" v-model="newSite.rating.price" required :state="formState.rating.price" />
-            </b-form-group>
-          </b-col>
-        </b-row>
-
-        <h4>Annehmlichkeiten</h4>
-        <b-row>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="showers" label="Duschen">
-              <b-form-checkbox switch id="showers" v-model="newSite.facilities.showers" :state="formState.facilities.showers" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="toilets" label="Toiletten">
-              <b-form-checkbox switch id="toilets" v-model="newSite.facilities.toilets" :state="formState.facilities.toilets" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="shop" label="Shop">
-              <b-form-checkbox switch id="shop" v-model="newSite.facilities.shop" :state="formState.facilities.shop" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="restaurant" label="Restaurant">
-              <b-form-checkbox switch id="restaurant" v-model="newSite.facilities.restaurant" :state="formState.facilities.restaurant" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="electricHookup" label="Strom">
-              <b-form-checkbox switch id="electricHookup" v-model="newSite.facilities.electricHookup" :state="formState.facilities.electricHookup" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="cafe" label="Café">
-              <b-form-checkbox switch id="cafe" v-model="newSite.facilities.cafe" :state="formState.facilities.cafe" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="localDogWalk" label="Hundespaziergang">
-              <b-form-checkbox switch id="localDogWalk" v-model="newSite.facilities.localDogWalk" :state="formState.facilities.localDogWalk" />
-            </b-form-group>
-          </b-col>
-          <b-col cols="12" md="6" lg="3" xl="2">
-            <b-form-group label-for="wifi" label="Internet">
-              <b-form-checkbox switch id="wifi" v-model="newSite.facilities.wifi" :state="formState.facilities.wifi" />
-            </b-form-group>
-          </b-col>
-        </b-row>
+        </template>
       </div>
     </b-form>
 
@@ -104,7 +128,7 @@
 
 <script>
 import GpsSelectorModal from '@/components/modals/GpsSelectorModal'
-import { apiPostSite } from '@/mixins/api'
+import { apiPostSite, apiGetSites, apiPostSiteWithId } from '@/mixins/api'
 const emitter = require('tiny-emitter/instance')
 
 export default {
@@ -122,6 +146,9 @@ export default {
       siteTypeOptions: ['campsite', 'wildcamp'],
       groundTypeOptions: ['grass', 'gravel', 'paved', 'sand'],
       formValidated: false,
+      isNew: true,
+      sites: [],
+      siteId: null,
       formState: {
         name: null,
         description: null,
@@ -174,6 +201,16 @@ export default {
       }
     }
   },
+  computed: {
+    siteOptions: function () {
+      return this.sites.map(s => {
+        return {
+          value: s.id,
+          text: s.name
+        }
+      })
+    }
+  },
   methods: {
     updateSiteLocation: function (location) {
       this.newSite.latitude = location.latitude
@@ -184,50 +221,73 @@ export default {
       return variable !== undefined && variable !== null && (((typeof variable) === 'string') ? variable.length > 0 : true)
     },
     onSubmit: function () {
-      this.formValidated = true
+      if (this.isNew) {
+        this.formValidated = true
 
-      this.formState = {
-        name: this.isSet(this.newSite.name),
-        description: this.isSet(this.newSite.description),
-        latitude: this.newSite.latitude !== undefined && this.newSite.latitude !== null,
-        longitude: this.newSite.longitude !== undefined && this.newSite.longitude !== null,
-        rating: {
-          facilities: this.newSite.price !== undefined && this.newSite.price !== null,
-          location: this.newSite.location !== undefined && this.newSite.location !== null,
-          scenery: this.newSite.scenery !== undefined && this.newSite.scenery !== null,
-          price: this.newSite.price !== undefined && this.newSite.price !== null
-        },
-        facilities: {
-          cafe: this.newSite.facilities.cafe !== undefined && this.newSite.facilities.cafe !== null,
-          shop: this.newSite.facilities.shop !== undefined && this.newSite.facilities.shop !== null,
-          showers: this.newSite.facilities.showers !== undefined && this.newSite.facilities.showers !== null,
-          toilets: this.newSite.facilities.toilets !== undefined && this.newSite.facilities.toilets !== null,
-          restaurant: this.newSite.facilities.restaurant !== undefined && this.newSite.facilities.restaurant !== null,
-          electricHookup: this.newSite.facilities.electricHookup !== undefined && this.newSite.facilities.electricHookup !== null,
-          localDogWalk: this.newSite.facilities.localDogWalk !== undefined && this.newSite.facilities.localDogWalk !== null,
-          wifi: this.newSite.facilities.wifi !== undefined && this.newSite.facilities.wifi !== null
+        this.formState = {
+          name: this.isSet(this.newSite.name),
+          description: this.isSet(this.newSite.description),
+          latitude: this.newSite.latitude !== undefined && this.newSite.latitude !== null,
+          longitude: this.newSite.longitude !== undefined && this.newSite.longitude !== null,
+          rating: {
+            facilities: this.newSite.price !== undefined && this.newSite.price !== null,
+            location: this.newSite.location !== undefined && this.newSite.location !== null,
+            scenery: this.newSite.scenery !== undefined && this.newSite.scenery !== null,
+            price: this.newSite.price !== undefined && this.newSite.price !== null
+          },
+          facilities: {
+            cafe: this.newSite.facilities.cafe !== undefined && this.newSite.facilities.cafe !== null,
+            shop: this.newSite.facilities.shop !== undefined && this.newSite.facilities.shop !== null,
+            showers: this.newSite.facilities.showers !== undefined && this.newSite.facilities.showers !== null,
+            toilets: this.newSite.facilities.toilets !== undefined && this.newSite.facilities.toilets !== null,
+            restaurant: this.newSite.facilities.restaurant !== undefined && this.newSite.facilities.restaurant !== null,
+            electricHookup: this.newSite.facilities.electricHookup !== undefined && this.newSite.facilities.electricHookup !== null,
+            localDogWalk: this.newSite.facilities.localDogWalk !== undefined && this.newSite.facilities.localDogWalk !== null,
+            wifi: this.newSite.facilities.wifi !== undefined && this.newSite.facilities.wifi !== null
+          }
         }
-      }
 
-      const result = Object.keys(this.formState).map(k => this.formState[k]).reduce((a, b) => a && b, true)
+        const result = Object.keys(this.formState).map(k => this.formState[k]).reduce((a, b) => a && b, true)
 
-      if (!result) {
-        console.log('something is wrong')
-        return
+        if (!result) {
+          console.log('something is wrong')
+          return
+        } else {
+          console.log('all fine')
+        }
+
+        emitter.emit('set-loading', true)
+
+        apiPostSite(this.post.id, this.newSite, result => {
+          emitter.emit('set-loading', false)
+          this.$emit('changed')
+          this.hide()
+        }, error => {
+          emitter.emit('set-loading', false)
+          console.error(error)
+        })
       } else {
-        console.log('all fine')
+        this.formValidated = true
+
+        this.formState = {
+          name: this.isSet(this.siteId)
+        }
+
+        if (this.siteId == null) {
+          return
+        }
+
+        emitter.emit('set-loading', true)
+
+        apiPostSiteWithId(this.post.id, this.siteId, this.newSite.groundtype, result => {
+          emitter.emit('set-loading', false)
+          this.$emit('changed')
+          this.hide()
+        }, error => {
+          emitter.emit('set-loading', false)
+          console.error(error)
+        })
       }
-
-      emitter.emit('set-loading', true)
-
-      apiPostSite(this.post.id, this.newSite, result => {
-        emitter.emit('set-loading', false)
-        this.$emit('changed')
-        this.hide()
-      }, error => {
-        emitter.emit('set-loading', false)
-        console.error(error)
-      })
     },
     show: function () {
       if (this.post) {
@@ -290,6 +350,11 @@ export default {
     hide: function () {
       this.$refs.modal.hide()
     }
+  },
+  mounted: function () {
+    apiGetSites(null, result => {
+      this.sites = result.sort((a, b) => a.name.localeCompare(b.name))
+    })
   }
 }
 </script>
