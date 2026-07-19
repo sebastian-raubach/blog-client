@@ -1,11 +1,11 @@
 <template>
   <b-card no-body class="hill h-100" v-if="site">
     <b-row no-gutters class="h-100">
-      <b-col cols=12 md="3" class="d-flex align-items-center justify-content-center bg-dark">
-        <CampsiteIcon class="camp-icon p-5 w-100 h-100 text-info" v-if="site.sitetype === 'campsite'" />
-        <WildcampIcon class="camp-icon p-5 w-100 h-100 text-success" v-if="site.sitetype === 'wildcamp'" />
+      <b-col cols="12" md="4" lg="3" class="d-flex align-items-center justify-content-center bg-dark site-icon">
+        <CampsiteIcon class="camp-icon p-3 w-100 h-100 text-info" v-if="site.sitetype === 'campsite'" />
+        <WildcampIcon class="camp-icon p-3 w-100 h-100 text-success" v-if="site.sitetype === 'wildcamp'" />
       </b-col>
-      <b-col cols=12 md="9">
+      <b-col cols="12" md="8" lg="9">
         <b-card-body class="d-flex flex-column justify-content-between h-100">
           <div>
             <b-card-title>{{ site.name }}</b-card-title>
@@ -45,14 +45,14 @@
               <b-col cols=12 xl=6 class="mb-2">
                 <b-card-sub-title>Annehmlichkeiten</b-card-sub-title>
                 <b-card-text class="mx-2">
-                  <ShowerIcon :class="`pr-2 ${site.facilities.showers ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Duschen'" />
-                  <ToiletIcon :class="`pr-2 ${site.facilities.toilets ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Toiletten'" />
-                  <ElectricHookupIcon :class="`pr-2 ${site.facilities.electricHookup ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Strom'" />
-                  <ShopIcon :class="`pr-2 ${site.facilities.shop ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Shop'" />
-                  <RestaurantIcon :class="`pr-2 ${site.facilities.restaurant ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Restaurant'" />
-                  <CafeIcon :class="`pr-2 ${site.facilities.cafe ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Café'" />
-                  <DogWalkIcon :class="`pr-2 ${site.facilities.localDogWalk ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Hundespaziergang'" />
-                  <WifiIcon :class="`pr-2 ${site.facilities.wifi ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Internet'" />
+                  <SvgIcon size="32" :path="mdiShowerHead" type="mdi" :class="`pr-2 ${site.facilities.showers ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Duschen'" />
+                  <SvgIcon size="32" :path="mdiPaperRoll" type="mdi" :class="`pr-2 ${site.facilities.toilets ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Toiletten'" />
+                  <SvgIcon size="32" :path="mdiPowerPlug" type="mdi" :class="`pr-2 ${site.facilities.electricHookup ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Strom'" />
+                  <SvgIcon size="32" :path="mdiStore" type="mdi" :class="`pr-2 ${site.facilities.shop ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Shop'" />
+                  <SvgIcon size="32" :path="mdiSilverwareForkKnife" type="mdi" :class="`pr-2 ${site.facilities.restaurant ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Restaurant'" />
+                  <SvgIcon size="32" :path="mdiCoffee" type="mdi" :class="`pr-2 ${site.facilities.cafe ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Café'" />
+                  <SvgIcon size="32" :path="mdiDogSide" type="mdi" :class="`pr-2 ${site.facilities.localDogWalk ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Hundespaziergang'" />
+                  <SvgIcon size="32" :path="mdiWifi" type="mdi" :class="`pr-2 ${site.facilities.wifi ? 'text-success' : 'text-dark'}`" v-b-tooltip="'Internet'" />
                 </b-card-text>
               </b-col>
               <b-col cols=12 xl=6 class="mb-2">
@@ -72,14 +72,8 @@
 <script>
 import CampsiteIcon from '@/components/icons/CampsiteIcon'
 import WildcampIcon from '@/components/icons/WildcampIcon'
-import ShowerIcon from '@/components/icons/ShowerIcon'
-import ToiletIcon from '@/components/icons/ToiletIcon'
-import ShopIcon from '@/components/icons/ShopIcon'
-import RestaurantIcon from '@/components/icons/RestaurantIcon'
-import ElectricHookupIcon from '@/components/icons/ElectricHookupIcon'
-import CafeIcon from '@/components/icons/CafeIcon'
-import DogWalkIcon from '@/components/icons/DogWalkIcon'
-import WifiIcon from '@/components/icons/WifiIcon'
+import SvgIcon from '@jamescoyle/vue-icon'
+import { mdiCoffee, mdiDogSide, mdiPaperRoll, mdiPowerPlug, mdiShowerHead, mdiSilverwareForkKnife, mdiStore, mdiWifi } from '@mdi/js'
 
 export default {
   props: {
@@ -92,17 +86,22 @@ export default {
       default: true
     }
   },
+  data: function () {
+    return {
+      mdiWifi,
+      mdiDogSide,
+      mdiCoffee,
+      mdiSilverwareForkKnife,
+      mdiStore,
+      mdiPaperRoll,
+      mdiShowerHead,
+      mdiPowerPlug
+    }
+  },
   components: {
+    SvgIcon,
     CampsiteIcon,
-    WifiIcon,
-    WildcampIcon,
-    ShowerIcon,
-    ToiletIcon,
-    ShopIcon,
-    RestaurantIcon,
-    ElectricHookupIcon,
-    CafeIcon,
-    DogWalkIcon
+    WildcampIcon
   },
   computed: {
     groundTypes: function () {
@@ -122,3 +121,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.site-icon svg {
+  max-height: 200px;
+}
+</style>
