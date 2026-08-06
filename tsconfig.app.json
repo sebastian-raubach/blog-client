@@ -13,7 +13,6 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-    "base": ".",
     "allowJs": true,
     "types": ["node"],
     "paths": {

@@ -114,27 +114,29 @@ function render() {
 
   if (props.sites?.length) {
     props.sites.forEach((site) => {
-      bounds.push([site.latitude, site.longitude] as L.LatLngExpression)
-      const siteMarker = L.marker([site.latitude, site.longitude], {
-        icon: buildSiteIcon(siteTypeConfigs[site.sitetype].color),
-        zIndexOffset: 400,
-      }).addTo(layerGroup!)
-      siteMarker.on('click', () => {
-        selectedSite.value = site
+      if (site.latitude !== undefined && site.longitude !== undefined) {
+        bounds.push([site.latitude, site.longitude] as L.LatLngExpression)
+        const siteMarker = L.marker([site.latitude, site.longitude], {
+          icon: buildSiteIcon(siteTypeConfigs[site.sitetype].color),
+          zIndexOffset: 400,
+        }).addTo(layerGroup!)
+        siteMarker.on('click', () => {
+          selectedSite.value = site
 
-        nextTick(() => {
-          bottomSheet.value = true
+          nextTick(() => {
+            bottomSheet.value = true
+          })
         })
-      })
- 
-      const labelText = `${site.name} · ${siteTypeConfigs[site.sitetype].title}`
-      siteMarker.bindTooltip(labelText, {
-        // permanent: props.showsiteLabels,
-        direction: 'top',
-        offset: [0, -10],
-        className: 'site-map__site-tooltip',
-        opacity: 1,
-      })
+  
+        const labelText = `${site.name} · ${siteTypeConfigs[site.sitetype].title}`
+        siteMarker.bindTooltip(labelText, {
+          // permanent: props.showsiteLabels,
+          direction: 'top',
+          offset: [0, -10],
+          className: 'site-map__site-tooltip',
+          opacity: 1,
+        })
+      }
     })
   }
 
