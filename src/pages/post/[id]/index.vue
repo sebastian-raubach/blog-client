@@ -609,11 +609,16 @@
     })
   }
 
-  onMounted(() => {
-    if (route.params.id) {
-      update(+route.params.id)
-    }
-  })
+  // Watch for param changes and update data
+  watch(
+    () => route.params.id,
+    (newId) => {
+      if (newId) {
+        update(+newId)
+      }
+    },
+    { immediate: true },
+  )
 
   watch(bottomSheet, async newValue => {
     if (newValue === false) {
