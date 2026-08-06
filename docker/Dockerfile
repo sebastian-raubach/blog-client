@@ -15,9 +15,9 @@ RUN apk add --no-cache git && \
 # Build the client code
 WORKDIR /opt/blog-client
 RUN rm -f .env && \
-    echo "VUE_APP_BASE_URL=./api/" > .env && \
+    echo "VITE_BASE_URL=./api/" > .env && \
     apk add --no-cache python3 build-base gcc wget && \
-    npm i --legacy-peer-deps && \
+    npm i && \
     npm run build && \
     mkdir /opt/blog-server/client/ && \
     cp -a /opt/blog-client/dist/. /opt/blog-server/client/

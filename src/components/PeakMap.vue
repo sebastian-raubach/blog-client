@@ -1,28 +1,28 @@
 <template>
-  <div class="site-map mx-auto" :style="{ height: mapHeight, borderRadius: `${rounded}px`, maxWidth: maxWidth }">
-    <div ref="mapEl" class="site-map__canvas" />
+  <div class="peak-map mx-auto" :style="{ height: mapHeight, borderRadius: `${rounded}px`, maxWidth: maxWidth }">
+    <div ref="mapEl" class="peak-map__canvas" />
 
-    <div v-if="label" class="site-map__label">
-      <span class="site-map__label-text">{{ label }}</span>
+    <div v-if="label" class="peak-map__label">
+      <span class="peak-map__label-text">{{ label }}</span>
     </div>
     <v-bottom-sheet
       v-model="bottomSheet"
       :inset="lgAndUp"
       max-height="50vh"
       width="auto"
-      v-if="selectedSite"
+      v-if="selectedHill"
     >
       <v-card class="pb-10">
         <v-card-title class="d-flex justify-space-between align-center">
           <div class="d-flex align-center">
-            <v-icon class="me-3" :icon="siteTypeConfigs[selectedSite.sitetype].icon" />
-            <div>{{ selectedSite.name }}</div>
+            <v-icon class="me-3" :icon="hillConfigs[selectedHill.hillType].icon" />
+            <div>{{ selectedHill.hillType }}</div>
           </div>
           <v-btn :icon="mdiClose" variant="text" @click="bottomSheet = false" />
         </v-card-title>
         
         <v-card-text>
-          <SiteDetails :site-id="selectedSite.id" />
+          <HillDetails :hill-id="selectedHill.hillId || -1" />
         </v-card-text>
       </v-card>
     </v-bottom-sheet>
@@ -43,10 +43,10 @@
  */
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import type { ViewSites } from '@/plugins/types/blog'
-import { siteTypeConfigs } from '@/plugins/constants'
-import { useDisplay } from 'vuetify'
+import type { ViewHills } from '@/plugins/types/blog'
+import { hillConfigs } from '@/plugins/constants'
 import { mdiClose } from '@mdi/js'
+import { useDisplay } from 'vuetify'
 
 interface Props {
   /** Optional caption chip, e.g. an overall trip name */
@@ -60,9 +60,9 @@ interface Props {
   /** Maximum width of the map element */
   maxWidth?: string
   /** Named points of interest to highlight along the track, e.g. summits */
-  sites?: ViewSites[]
-  /** Show site names as permanent labels rather than only on hover */
-  showSiteLabels?: boolean
+  peaks?: ViewHills[]
+  /** Show peak names as permanent labels rather than only on hover */
+  showPeakLabels?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -70,8 +70,8 @@ const props = withDefaults(defineProps<Props>(), {
   height: '220px',
   rounded: 16,
   interactive: true,
-  sites: () => [],
-  showSiteLabels: true,
+  peaks: () => [],
+  showPeakLabels: true,
 })
 
 const emit = defineEmits<{
@@ -81,27 +81,25 @@ const emit = defineEmits<{
   error: [message: string]
 }>()
 
-const { lgAndUp } = useDisplay()
-const bottomSheet = ref(false)
-const selectedSite = ref<ViewSites>()
-
 const mapEl = ref<HTMLDivElement | null>(null)
 const mapHeight = props.height
+
+const { lgAndUp } = useDisplay()
+const bottomSheet = ref(false)
+const selectedHill = ref<ViewHills>()
 
 let map: L.Map | null = null
 let layerGroup: L.LayerGroup | null = null
 
 /** Small triangular "summit" glyph, anchored at its base so the tip sits above the exact point. */
-function buildSiteIcon(color: string) {
+function buildPeakIcon(color: string) {
   return L.divIcon({
-    className: 'site-map__site',
-    html: `<svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="11" cy="11" r="10" fill="${color}" stroke="#ffffff" stroke-width="2" />
-      <path d="M11 5.5L17 16H5Z" fill="#ffffff" />
-      <path d="M11 10.2L13.6 16H8.4Z" fill="${color}" />
+    className: 'peak-map__peak',
+    html: `<svg width="14" height="13" viewBox="0 0 14 13" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 0.5L13.2 12H0.8Z" fill="${color}" stroke="#2c3e50" stroke-width="1.2" stroke-linejoin="round" />
     </svg>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    iconSize: [14, 13],
+    iconAnchor: [7, 12],
   })
 }
 
@@ -112,27 +110,29 @@ function render() {
 
   const bounds: L.LatLngExpression[] = []
 
-  if (props.sites?.length) {
-    props.sites.forEach((site) => {
-      bounds.push([site.latitude, site.longitude] as L.LatLngExpression)
-      const siteMarker = L.marker([site.latitude, site.longitude], {
-        icon: buildSiteIcon(siteTypeConfigs[site.sitetype].color),
+  if (props.peaks.length) {
+    props.peaks.forEach((peak) => {
+      bounds.push([peak.hillLatitude, peak.hillLongitude] as L.LatLngExpression)
+      const peakMarker = L.marker([peak.hillLatitude, peak.hillLongitude], {
+        icon: buildPeakIcon(hillConfigs[peak.hillType].color),
         zIndexOffset: 400,
       }).addTo(layerGroup!)
-      siteMarker.on('click', () => {
-        selectedSite.value = site
+      peakMarker.on('click', () => {
+        selectedHill.value = peak
 
         nextTick(() => {
           bottomSheet.value = true
         })
       })
  
-      const labelText = `${site.name} · ${siteTypeConfigs[site.sitetype].title}`
-      siteMarker.bindTooltip(labelText, {
-        // permanent: props.showsiteLabels,
+      const labelText = peak.hillElevation
+        ? `${peak.hillName} · ${hillConfigs[peak.hillType].title} · ${Math.round(peak.hillElevation)} m`
+        : peak.hillName
+      peakMarker.bindTooltip(labelText, {
+        // permanent: props.showPeakLabels,
         direction: 'top',
         offset: [0, -10],
-        className: 'site-map__site-tooltip',
+        className: 'peak-map__peak-tooltip',
         opacity: 1,
       })
     })
@@ -176,7 +176,7 @@ function initMap() {
     .addTo(map)
 }
 
-watch(() => props.sites, render)
+watch(() => props.peaks, render)
 
 onMounted(() => {
   initMap()
@@ -188,7 +188,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.site-map {
+.peak-map {
   position: relative;
   width: 100%;
   overflow: hidden;
@@ -197,16 +197,16 @@ onBeforeUnmount(() => {
   background: #eef1f4;
 }
 
-.site-map__canvas {
+.peak-map__canvas {
   width: 100%;
   height: 100%;
 }
 
-/* Site markers */
-:global(.site-map__site) {
+/* Peak / summit markers */
+:global(.peak-map__peak) {
   filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.25));
 }
-:global(.site-map__site-tooltip) {
+:global(.peak-map__peak-tooltip) {
   background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(4px);
   border: none !important;
@@ -217,12 +217,12 @@ onBeforeUnmount(() => {
   font-weight: 500;
   color: #1e2733;
 }
-:global(.site-map__site-tooltip::before) {
+:global(.peak-map__peak-tooltip::before) {
   display: none !important;
 }
 
 /* Label chip (overall trip name) */
-.site-map__label {
+.peak-map__label {
   position: absolute;
   left: 10px;
   top: 10px;
@@ -236,7 +236,7 @@ onBeforeUnmount(() => {
   z-index: 500;
   max-width: calc(100% - 56px);
 }
-.site-map__label-text {
+.peak-map__label-text {
   font-size: 12px;
   font-weight: 500;
   line-height: 1;

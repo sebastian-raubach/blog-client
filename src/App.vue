@@ -1,480 +1,164 @@
 <template>
-  <div id="app">
-    <b-navbar toggleable="md" sticky type="dark" id="header" :class="`header ${isScrolled ? 'header-scrolled' : null}`">
-      <b-container>
-        <h1 class="logo">
-          <router-link class="scrollto" :to="{ name: 'home' }">
-            <span class="logo-icon-wrapper"><img class="logo-icon" src="@/assets/logo-small.svg" alt="icon"></span>
-            <span class="text"><span class="highlight">MIRI</span>&amp;<span class="highlight">BAZ</span></span>
-          </router-link>
-        </h1>
+  <v-app>
+    <v-app-bar
+      class="px-3"
+      density="compact"
+      flat
+    >
+      <template #prepend v-if="canGoBack">
+        <v-btn :icon="mdiArrowLeft" @click="goBack()" />
+      </template>
+      <v-avatar
+        size="32"
+      >
+        <v-img src="@/assets/img/logo.svg" alt="Logo" />
+      </v-avatar>
 
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <v-spacer></v-spacer>
 
-        <b-collapse id="nav-collapse" is-nav>
-          <!-- Right aligned nav items -->
-          <b-navbar-nav class="ml-auto">
-            <b-nav-item :to="{ name: 'home' }">Home</b-nav-item>
-            <b-nav-item :to="{ name: 'posts' }">Neuigkeiten</b-nav-item>
-            <b-nav-item :to="{ name: 'sites' }">Camping</b-nav-item>
-            <b-nav-item :to="{ name: 'hikes' }">Wandern</b-nav-item>
-            <b-nav-item :to="{ name: 'stories' }">Stories</b-nav-item>
-            <b-nav-item :to="{ name: 'search' }">Suche</b-nav-item>
-            <b-nav-item-dropdown right variant="dark" text="Admin" v-if="storeToken">
-              <b-dropdown-item variant="dark" :to="{ name: 'post-editor' }">Neuer Beitrag</b-dropdown-item>
-              <b-dropdown-item variant="dark" :to="{ name: 'story-editor' }">Neue Story</b-dropdown-item>
-            </b-nav-item-dropdown>
-          </b-navbar-nav>
-        </b-collapse>
-      </b-container>
-    </b-navbar>
+      <v-tabs
+        align-tabs="center"
+        :model-value="route.path"
+        v-if="smAndUp"
+      >
+        <v-tab
+          v-for="tab in tabs"
+          :to="tab.to"
+          :key="tab.to"
+          :text="tab.label"
+          :prepend-icon="tab.icon"
+        ></v-tab>
+      </v-tabs>
 
-    <router-view :key="$route.fullPath"/>
+      <v-spacer></v-spacer>
+    </v-app-bar>
 
-    <footer class="footer text-center">
-      <div class="container">
-        <div><small class="copyright">Inhalt und Bilder von Miriam Schreiber und Sebastian Raubach</small></div>
-        <!--/* This template is free as long as you keep the footer attribution link. If you'd like to use the template without the attribution link, you can buy the commercial license via our website: themes.3rdwavemedia.com Thank you for your support. :) */-->
-        <div><small class="copyright">Template designed with <i class="icofont-heart footer-icon" /> by <a href="https://themes.3rdwavemedia.com/" target="_blank">Xiaoying Riley</a> for developers</small></div>
-        <hr />
-        <div>
-          <small class="copyright">
-            <a href="#" @click.prevent="logout" v-if="storeToken">Logout</a>
-            <a href="#" @click.prevent="$refs.loginModal.show()" v-else>Login</a>
-          </small>
-        </div>
-      </div>
-    </footer>
+    <v-main class="d-flex flex-column min-vh-100">
+      <router-view />
 
-    <LoginModal ref="loginModal" />
+      <ConfirmModal />
 
-    <b-modal v-model="loading" title="Lade" hide-footer no-close-on-backdrop no-close-on-esc hide-header-close>
-      <div class="text-center">
-        <b-spinner style="width: 3rem; height: 3rem;" variant="primary" type="grow" />
-      </div>
-    </b-modal>
-  </div>
+      <v-footer class="d-flex justify-space-between mt-auto flex-grow-0"">
+        <span>&copy; {{ new Date().getFullYear() }}</span>
+        <span>
+          <a href="#" @click.prevent="store.setToken(undefined)" v-if="store.storeToken">Logout</a>
+          <router-link to="/login" v-else>Login</router-link>
+        </span>
+      </v-footer>
+    </v-main>
+
+    <!-- Show bottom navigation on mobile only (XS) -->
+    <v-bottom-navigation
+      :model-value="route.path"
+      active
+      app
+      color="primary"
+      class="d-flex d-sm-none"
+      v-if="xs"
+    >
+      <v-btn
+        v-for="tab in tabs"
+        :key="tab.to"
+        :to="tab.to"
+        :value="tab.to"
+      >
+        <v-icon>{{ tab.icon }}</v-icon>
+        <span>{{ tab.label }}</span>
+      </v-btn>
+    </v-bottom-navigation>
+  </v-app>
 </template>
 
-<script>
-import LoginModal from '@/components/modals/LoginModal'
-import { mapGetters } from 'vuex'
-import { setOptions, bootstrap } from 'vue-gtag'
-import { apiGetSettings } from '@/mixins/api'
+<script lang="ts">
+  import { coreStore } from '@/stores/app'
+  import { mdiArrowLeft, mdiBookOpenPageVariant, mdiHome, mdiImageFilterHdr, mdiNotebookMultiple, mdiRvTruck } from '@mdi/js'
+  import { useDisplay } from 'vuetify'
+  import { useAppNavigation } from '@/plugins/composables/useAppNavigation'
 
-const emitter = require('tiny-emitter/instance')
-
-export default {
-  components: {
-    LoginModal
-  },
-  data: function () {
-    return {
-      headerClass: '',
-      loading: false,
-      scrollY: 0
-    }
-  },
-  computed: {
-    /** Mapgetters exposing the store configuration */
-    ...mapGetters([
-      'storeToken'
-    ]),
-    isScrolled: function () {
-      return this.scrollY > 0
-    }
-  },
-  methods: {
-    logout: function () {
-      this.$store.dispatch('setToken', null)
-      this.$router.push({ name: 'home' })
-    },
-    onScrollResize: function () {
-      this.scrollY = window.scrollY
-    },
-    setLoading: function (visible) {
-      this.loading = visible
-    },
-    toast: function (params) {
-      this.$bvToast.toast(params.message, params)
-    }
-  },
-  mounted: function () {
-    document.addEventListener('scroll', this.onScrollResize)
-    document.addEventListener('resize', this.onScrollResize)
-
-    emitter.on('set-loading', this.setLoading)
-    emitter.on('toast', this.toast)
-
-    apiGetSettings(settings => {
-      if (settings && settings.googleAnalyticsKey) {
-        setOptions({
-          config: { id: settings.googleAnalyticsKey },
-          enabled: true
-        })
-
-        bootstrap()
-      }
-    })
-  },
-  beforeDestroy: function () {
-    document.removeEventListener('scroll', this.onScrollResize)
-    document.removeEventListener('resize', this.onScrollResize)
-
-    emitter.off('set-loading', this.setLoading)
-    emitter.off('toast', this.toast)
+  interface Tab {
+    to: string
+    label: string
+    icon: string
   }
-}
+
+  export default {
+    setup () {
+      const store = coreStore()
+      const route = useRoute()
+      const router = useRouter()
+      const { xs, smAndUp } = useDisplay()
+      const { canGoBack, goBack } = useAppNavigation(router)
+
+      const tabs = computed(() => {
+        return [{
+          to: '/',
+          label: 'Home',
+          icon: mdiHome,
+        }, {
+          to: '/post',
+          label: 'Berichte',
+          icon: mdiNotebookMultiple,
+        }, {
+          to: '/hill',
+          label: 'Gipfel',
+          icon: mdiImageFilterHdr,
+        }, {
+          to: '/site',
+          label: 'Camping',
+          icon: mdiRvTruck,
+        }, {
+          to: '/story',
+          label: 'Stories',
+          icon: mdiBookOpenPageVariant,
+        }]
+      })
+
+      // Set base URL based on environment
+      let baseUrl = './api/'
+      if (import.meta.env.VITE_BASE_URL) {
+        baseUrl = import.meta.env.VITE_BASE_URL
+      }
+
+      store.setBaseUrl(baseUrl)
+
+      return {
+        store,
+        tabs,
+        route,
+        xs,
+        smAndUp,
+        canGoBack,
+        goBack,
+        mdiArrowLeft,
+      }
+    }
+  }
 </script>
 
-<style lang="scss">
-$primary: #0079ed;
-$body-bg: #222629;
-$body-color: #ecf0f1;
-$modal-content-color:  #ecf0f1;
-$modal-content-bg: #222629;
-$modal-content-border-color: rgba(#ecf0f1, .2);
-$border-color: #495057;
-$close-color: #ecf0f1;
-
-$border-radius: 0;
-$border-radius-sm: 0;
-$border-radius-lg: 0;
-$border-radius-pill: 0;
-
-$input-bg: #494d55;
-$input-color: #8099a0;
-
-$card-color: #ffffff;
-$card-bg: #494d55;
-$text-muted: #ced4da;
-
-$grid-breakpoints: (
-  xs: 0,
-  sm: 576px,
-  md: 768px,
-  lg: 992px,
-  xl: 1200px,
-  xxl: 1400px,
-  xxxl: 1600px
-);
-
-$container-max-widths: (
-  sm: 540px,
-  md: 720px,
-  lg: 960px,
-  xl: 1140px,
-  xxl: 1320px,
-  xxxl: 1500px
-);
-
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-vue/src/index.scss';
-
-body {
-  font-family: 'Open Sans', arial, sans-serif;
-  color: #ecf0f1;
-  background-color: #222629;
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height:  100vh;
-}
-
-p {
-  margin-bottom: 15px;
-  line-height: 1.5;
-}
-
-a {
-  color: #3aa7aa;
-  -webkit-transition: all 0.4s ease-in-out;
-  -moz-transition: all 0.4s ease-in-out;
-  -ms-transition: all 0.4s ease-in-out;
-  -o-transition: all 0.4s ease-in-out;
-}
-
-a:hover {
-  text-decoration: underline;
-  color: #339597;
-}
-
-a:active {
-  text-decoration: none;
-}
-
-a:focus {
-  text-decoration: none;
-}
-
-.btn, a.btn {
-  -webkit-transition: all 0.4s ease-in-out;
-  -moz-transition: all 0.4s ease-in-out;
-  -ms-transition: all 0.4s ease-in-out;
-  -o-transition: all 0.4s ease-in-out;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.btn .fa, a.btn .fa {
-  margin-right: 5px;
-}
-
-.btn:focus, a.btn:focus {
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-}
-
-.btn-cta, a.btn-cta {
-  font-weight: bold;
-  font-size: 16px;
-  padding: 10px 30px;
-}
-
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary.hover {
-  background: #3aa7aa;
-  color: #fff;
-  border: 1px solid #3aa7aa;
-}
-
-.btn-inverse {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid transparent;
-  color: #fff;
-}
-
-.btn-inverse:hover, .btn-inverse:focus, .btn-inverse:active, .btn-inverse.active, .btn-inverse.hover {
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border: 1px solid transparent;
-}
-
-.header {
-  background-color: transparent;
-  height: 60px;
-  position: fixed;
-  width: 100%;
-  transition: background-color .15s linear;
-}
-
-.header.header-scrolled {
-  background-color: #222629;
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-.header.header-scrolled a {
-  color: #eee;
-}
-
-.header.header-scrolled .logo {
-  color: #0079ed;
-  padding-top: 6px;
-}
-
-.header.header-scrolled .logo .logo-icon-wrapper {
-  background: #0079ed;
-  width: 40px;
-  height: 40px;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-  border-radius: 50%;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
-  text-align: center;
-}
-
-.header.header-scrolled .logo .logo-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 0;
-}
-
-.header.header-scrolled .main-nav .nav .nav-link {
-  color: #a2a6af;
-}
-
-.header.header-scrolled .main-nav .nav .nav-link:hover {
-  color: #6b6e70;
-}
-
-.header.header-scrolled .main-nav .nav .nav-link.active {
-  color: #eee;
-  border-bottom: 4px solid #0079ed;
-}
-
-.header a {
-  color: #fff;
-  -webkit-transition: none;
-  -moz-transition: none;
-  -ms-transition: none;
-  -o-transition: none;
-}
-
-.header a:hover {
-  text-decoration: none;
-}
-
-.header .logo {
-  margin: 0;
-  display: inline-block;
-  float: left;
-  font-size: 28px;
-}
-
-.header .logo .logo-icon-wrapper {
-  margin-right: 3px;
-  position: relative;
-  display: inline-block;
-  top: -3px;
-}
-
-.header .logo .logo-icon {
-  width: 30px;
-  height: 30px;
-}
-
-.header .logo .highlight {
-  font-weight: 800;
-}
-
-.main-nav {
-  margin-top: 6px;
-}
-
-.main-nav .navbar-toggler {
-  margin-right: 0;
-  margin-top: 0;
-  background: none;
+<style>
+/* v-parallax has no built-in scrim like v-img's `gradient` prop, so a thin
+   overlay is added here to keep the hero text readable over any image. */
+.hero-scrim {
   position: absolute;
-  padding: 8px 10px;
-  right: 10px;
-  top: 10px;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.05));
 }
-
-.main-nav .navbar-toggler:focus {
-  outline: none;
+.line-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  white-space: unset;
 }
-
-.main-nav .navbar-toggler .icon-bar {
-  display: block;
-  background-color: #fff;
-  height: 3px;
-  width: 22px;
-  -webkit-border-radius: 1px;
-  -moz-border-radius: 1px;
-  -ms-border-radius: 1px;
-  -o-border-radius: 1px;
-  border-radius: 1px;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
+.line-clamp-1 {
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
 }
-
-.main-nav .navbar-toggler .icon-bar + .icon-bar {
-  margin-top: 4px;
+.line-clamp-2 {
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
 }
-
-.main-nav .navbar-toggler:hover .icon-bar {
-  background-color: #fff;
-}
-
-.main-nav .nav .nav-item {
-  font-weight: normal;
-  font-size: 14px;
-  margin-right: 10px;
-}
-
-.main-nav .nav .nav-item .nav-link {
-  color: rgba(255, 255, 255, 0.65);
-  font-weight: 700;
-}
-
-.main-nav .nav .nav-item .nav-link.active {
-  position: relative;
-  background: none;
-  color: #fff;
-}
-
-.main-nav .nav .nav-item .nav-link:hover {
-  color: #fff;
-  background: none;
-}
-
-.main-nav .nav .nav-item .nav-link:focus {
-  outline: none;
-  background: none;
-}
-
-.main-nav .nav .nav-item .nav-link:active {
-  outline: none;
-  background: none;
-}
-
-.main-nav .nav .nav-item:last-child {
-  margin-right: 0;
-}
-
-.nav > li > a {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-.nav-link {
-  padding: 15px;
-}
-
-.footer {
-  background: #26282c;
-  color: rgba(255, 255, 255, 0.6);
-  padding: 15px 0;
-}
-
-hr {
-  border-top: 1px solid white;
-}
-
-.footer .footer-icon {
-  color: #EA5395;
-}
-
-@media (max-width: 767.98px) {
-  .navbar-collapse {
-    background: rgba(49, 52, 58, 0.9);
-  }
-  .header.header-scrolled .main-nav .nav .nav-link.active {
-    color: #0079ed;
-    border: none;
-  }
-  .navbar-collapse .nav-item {
-    margin-right: 0;
-  }
-  .navbar-collapse .nav-item a {
-    text-align: center;
-  }
-}
-
-@media (min-width: 768px) {
-}
-
-@media (min-width: 992px) {
-  .nav .nav-item {
-    margin-right: 25px;
-  }
-}
-
-@media (min-width: 1200px) {
-}
-
-// Bootstrap fixes
-.custom-file-label::after {
-  background-color: inherit;
+.line-clamp-3 {
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
 }
 </style>
