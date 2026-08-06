@@ -12,7 +12,7 @@
       <v-avatar
         size="32"
       >
-        <v-img src="@/assets/img/logo.svg" alt="Logo" />
+        <v-img src="@/assets/img/logo.svg" alt="Logo" style="cursor: pointer" @click="router.push('/')" />
       </v-avatar>
 
       <v-spacer></v-spacer>
@@ -138,6 +138,19 @@
 </script>
 
 <style>
+p a, p a:visited,
+table a:not(.v-btn, .v-chip), table a:not(.v-btn, .v-chip):visited,
+footer a, footer a:visited,
+.v-card-text a, .v-card-text a:visited,
+.scale-heading a, .scale-heading a:visited,
+.v-messages a, .v-messages a:visited,
+.v-list-item a, .v-list-item a:visited,
+a.table-icon-link, a.table-icon-link:visited,
+.v-card-text ul a, .v-card-text ul a:visited,
+form a, form a:visited {
+  color: rgb(var(--v-theme-primary));
+}
+
 /* v-parallax has no built-in scrim like v-img's `gradient` prop, so a thin
    overlay is added here to keep the hero text readable over any image. */
 .hero-scrim {
