@@ -6,7 +6,7 @@ ARG BRANCH=main
 ADD https://api.github.com/repos/sebastian-raubach/blog-client/git/refs/heads/main version.json
 # Clone the Blog server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
-RUN apk add --no-cache git && \
+RUN apt-get install -y --no-install-recommends git && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-server.git /opt/blog-server && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-client.git /opt/blog-client
 
@@ -14,7 +14,7 @@ RUN apk add --no-cache git && \
 WORKDIR /opt/blog-client
 RUN rm -f .env && \
     echo "VITE_BASE_URL=./api/" > .env && \
-    apk add --no-cache python3 build-base gcc wget unzip && \
+    apt-get install -y --no-install-recommends python3 build-base gcc wget unzip && \
     rm -rf /var/lib/apt/lists/* && \
     npm ci && \
     npm run build && \
@@ -22,7 +22,7 @@ RUN rm -f .env && \
     cp -a /opt/blog-client/dist/. /opt/blog-server/client/
 
 # Download Gradle and build the server code
-RUN apk add --no-cache openjdk21 && \
+RUN apt-get install -y --no-install-recommends openjdk21 && \
     wget https://services.gradle.org/distributions/gradle-8.8-bin.zip -P /tmp/ && \
     unzip /tmp/gradle-8.8-bin.zip -d /opt/ && \
     echo "data.directory.external=/data/blog/config" > /opt/blog-server/config.properties && \
