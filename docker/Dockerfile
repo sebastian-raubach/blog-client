@@ -14,6 +14,7 @@ RUN apt-get install -y --no-install-recommends git && \
 WORKDIR /opt/blog-client
 RUN rm -f .env && \
     echo "VITE_BASE_URL=./api/" > .env && \
+    apt-get update && \
     apt-get install -y --no-install-recommends python3 build-base gcc wget unzip && \
     rm -rf /var/lib/apt/lists/* && \
     npm ci && \
