@@ -6,7 +6,8 @@ ARG BRANCH=main
 ADD https://api.github.com/repos/sebastian-raubach/blog-client/git/refs/heads/main version.json
 # Clone the Blog server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
-RUN apt-get install -y --no-install-recommends git && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-server.git /opt/blog-server && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-client.git /opt/blog-client
 
@@ -14,7 +15,6 @@ RUN apt-get install -y --no-install-recommends git && \
 WORKDIR /opt/blog-client
 RUN rm -f .env && \
     echo "VITE_BASE_URL=./api/" > .env && \
-    apt-get update && \
     apt-get install -y --no-install-recommends python3 build-base gcc wget unzip && \
     rm -rf /var/lib/apt/lists/* && \
     npm ci && \
