@@ -1,8 +1,12 @@
 import { authAxios, type ErrorHandler } from '@/plugins/api/base'
 import type { ImageDetails, PostImport, PostRequest, PostsitesGroundtype, ViewPosts, YearCount } from '@/plugins/types/blog'
 
-export function apiGetPost (id: number, onSuccess?: (args: ViewPosts) => void, onError?: ErrorHandler) {
-  return authAxios({ url: `post/${id}`, method: 'GET', success: onSuccess, error: onError })
+export function apiGetPost (postId: number, onSuccess?: (args: ViewPosts) => void, onError?: ErrorHandler) {
+  return authAxios({ url: `post/${postId}`, method: 'GET', success: onSuccess, error: onError })
+}
+
+export function apiPostRelatedPosts (postId: number, related: number[], onSuccess?: (args: void) => void, onError?: ErrorHandler) {
+  return authAxios({ url: `post/${postId}/related`, method: 'POST', data: related, success: onSuccess, error: onError })
 }
 
 export function apiPostPosts (data: PostRequest, onSuccess?: (args: ViewPosts[]) => void, onError?: ErrorHandler) {

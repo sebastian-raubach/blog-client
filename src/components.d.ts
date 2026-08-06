@@ -20,6 +20,7 @@ declare module 'vue' {
     MiniLocationMap: typeof import('./components/MiniLocationMap.vue')['default']
     PeakMap: typeof import('./components/PeakMap.vue')['default']
     PostCard: typeof import('./components/PostCard.vue')['default']
+    PostSelector: typeof import('./components/select/PostSelector.vue')['default']
     PostStepContent: typeof import('./components/steps/PostStepContent.vue')['default']
     PostStepEntryType: typeof import('./components/steps/PostStepEntryType.vue')['default']
     PostStepGpx: typeof import('./components/steps/PostStepGpx.vue')['default']

@@ -4,6 +4,7 @@
       class="px-3"
       density="compact"
       flat
+      :absolute="xs"
     >
       <template #prepend v-if="canGoBack">
         <v-btn :icon="mdiArrowLeft" @click="goBack()" />
@@ -42,7 +43,7 @@
         <span>&copy; {{ new Date().getFullYear() }}</span>
         <span>
           <a href="#" @click.prevent="store.setToken(undefined)" v-if="store.storeToken">Logout</a>
-          <router-link to="/login" v-else>Login</router-link>
+          <router-link :to="`/login?redirect=${encodeURIComponent(router.currentRoute.value.fullPath)}`" v-else>Login</router-link>
         </span>
       </v-footer>
     </v-main>
@@ -125,6 +126,7 @@
         store,
         tabs,
         route,
+        router,
         xs,
         smAndUp,
         canGoBack,

@@ -24,7 +24,7 @@
               <h1 class="text-h3 text-md-h2 font-weight-black mb-2 position-relative my-3">
                 {{ post.postTitle }} 
               </h1>
-              <div class="d-flex ga-2 mb-3">
+              <div class="d-flex flex-wrap ga-2 mb-3">
                 <v-chip color="white" variant="tonal" size="small">
                   <v-icon :icon="mdiCalendar" start />
                   {{ date }}
@@ -269,7 +269,7 @@
             @click="openPhoto(index)"
           >
             <v-img
-              :src="`${store.storeBaseUrl}image/${photo.imageId}/large/${photo.imagePath}`"
+              :src="`${store.storeBaseUrl}image/${photo.imageId}/small/${photo.imagePath}`"
               height="240"
               cover
               class="align-end"
@@ -312,13 +312,14 @@
         </v-row>
       </template>
 
-      <template v-if="relatedPosts.length">
+      <template v-if="relatedPosts.length || store.storeToken">
         <h2 class="text-h4 font-weight-bold mb-1">
           Ähnliche Berichte
         </h2>
         <p class="text-subtitle-1 text-medium-emphasis">
           Dieser Beitrag ist verbunden mit den folgenden anderen Berichten.
         </p>
+        <v-btn v-if="store.storeToken" :prepend-icon="mdiLinkPlus" @click="addRelatedPosts" text="Ähnliche Berichte hinzufügen" class="mb-5" color="primary" />
         <v-row>
           <v-col
             v-for="p in relatedPosts"
@@ -387,8 +388,19 @@
       :inset="lgAndUp"
       max-height="50vh"
       width="auto"
-      v-if="selectedHill || selectedSite || newSite"
+      v-if="selectedHill || selectedSite || newSite || newRelatedPosts"
     >
+      <v-card class="pb-10" v-if="newRelatedPosts">
+        <template #title>
+          <div class="d-flex justify-space-between">
+            <span>Neuer ähnliche Berichte</span>
+            <v-btn text="Speichern" variant="flat" color="primary" :prepend-icon="mdiLinkPlus" :disabled="addRelatedPostsDisabled" @click="postRelatedPosts" />
+          </div>
+        </template>
+        <template #text>
+          <PostSelector v-model="newRelatedPosts" />
+        </template>
+      </v-card>
       <v-card class="pb-10" v-if="newSite">
         <template #title>
           <div class="d-flex justify-space-between">
@@ -453,7 +465,7 @@
   import SiteDetails from '@/components/SiteDetails.vue'
   import YoutubeVideo from '@/components/YoutubeVideo.vue'
   import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
-  import { apiGetPost, apiPostPosts, apiPostPostSite } from '@/plugins/api/post'
+  import { apiGetPost, apiPostPosts, apiPostPostSite, apiPostRelatedPosts } from '@/plugins/api/post'
   import { apiGetElevationProfile, apiGetTimeDistanceProfile } from '@/plugins/api/resource'
   import { apiGetSites, apiPostSite } from '@/plugins/api/site'
   import { apiGetStoryById } from '@/plugins/api/story'
@@ -461,7 +473,7 @@
   import { type PostHill, type ViewPosts, PostsType, type PostImage, type PostSite, type ViewStories, type ViewSites, SitesSitetype, PostsitesGroundtype } from '@/plugins/types/blog'
   import { formatMinutesToDHM, getPrimaryColor, getPrimaryImage, pad, parseTsvContentToPoint } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
-  import { mdiBinoculars, mdiCalendar,mdiCalendarExpandHorizontalOutline,mdiClockOutline, mdiClose, mdiElevationRise, mdiImageFilterHdr, mdiMapMarkerCheck, mdiMapMarkerDistance, mdiMapMarkerPath, mdiMapMarkerPlus, mdiWalk, mdiWeatherPartlyCloudy } from '@mdi/js'
+  import { mdiBinoculars, mdiCalendar,mdiCalendarExpandHorizontalOutline,mdiClockOutline, mdiClose, mdiElevationRise, mdiImageFilterHdr, mdiLinkPlus, mdiMapMarkerCheck, mdiMapMarkerDistance, mdiMapMarkerPath, mdiMapMarkerPlus, mdiWalk, mdiWeatherPartlyCloudy } from '@mdi/js'
   import { useDisplay } from 'vuetify'
 
   const route = useRoute('/post/[id]/')
@@ -483,6 +495,28 @@
 
   const elevationProfile = ref<Point[]>()
   const timeDistanceProfile = ref<Point[]>()
+
+  // Things for adding related posts
+  const newRelatedPosts = ref<ViewPosts[]>()
+  const addRelatedPostsDisabled = computed(() => !newRelatedPosts.value || newRelatedPosts.value.length === 0)
+  function addRelatedPosts () {
+    newRelatedPosts.value = []
+
+    nextTick(() => {
+      bottomSheet.value = true
+    })
+  }
+  async function postRelatedPosts () {
+    if (!post.value || !newRelatedPosts.value || newRelatedPosts.value.length === 0) {
+      return
+    }
+
+    await apiPostRelatedPosts(post.value.postId, newRelatedPosts.value.map(nrp => nrp.postId))
+
+    update(post.value.postId)
+
+    bottomSheet.value = false
+  }
 
   // Things for adding a new site
   const newSite = ref<ViewSites>()
@@ -625,6 +659,7 @@
       newSite.value = undefined
       selectedHill.value = undefined
       selectedSite.value = undefined
+      newRelatedPosts.value = undefined
     }
   })
 

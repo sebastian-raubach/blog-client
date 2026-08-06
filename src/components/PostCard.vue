@@ -45,7 +45,7 @@
         <div v-html="post.postContent" v-else />
       </p>
 
-      <div class="d-flex ga-4 mt-2 pt-2 border-t text-caption font-weight-medium">
+      <div class="d-flex flex-wrap ga-4 mt-2 pt-2 border-t text-caption font-weight-medium">
         <template v-if="post.postType === PostsType.hike">
           <div v-if="duration">
             <v-icon :icon="mdiClockOutline" size="small" class="me-1" />
