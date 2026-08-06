@@ -1,4 +1,4 @@
-FROM node:22.11-bullseye-slim AS builder
+FROM node:22.11-alpine3.19 AS builder
 
 ARG BRANCH=main
 
@@ -6,8 +6,7 @@ ARG BRANCH=main
 ADD https://api.github.com/repos/sebastian-raubach/blog-client/git/refs/heads/main version.json
 # Clone the Blog server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git ca-certificates && \
+RUN apk add --no-cache git && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-server.git /opt/blog-server && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/blog-client.git /opt/blog-client
 
@@ -15,15 +14,14 @@ RUN apt-get update && \
 WORKDIR /opt/blog-client
 RUN rm -f .env && \
     echo "VITE_BASE_URL=./api/" > .env && \
-    apt-get install -y --no-install-recommends python3 gcc wget unzip && \
-    rm -rf /var/lib/apt/lists/* && \
-    npm ci && \
+    apk add --no-cache python3 build-base gcc wget && \
+    npm i && \
     npm run build && \
     mkdir /opt/blog-server/client/ && \
     cp -a /opt/blog-client/dist/. /opt/blog-server/client/
 
 # Download Gradle and build the server code
-RUN apt-get install -y --no-install-recommends openjdk21 && \
+RUN apk add --no-cache openjdk21 && \
     wget https://services.gradle.org/distributions/gradle-8.8-bin.zip -P /tmp/ && \
     unzip /tmp/gradle-8.8-bin.zip -d /opt/ && \
     echo "data.directory.external=/data/blog/config" > /opt/blog-server/config.properties && \
