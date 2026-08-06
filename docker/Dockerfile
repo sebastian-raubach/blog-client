@@ -1,4 +1,4 @@
-FROM node:22-slim AS builder
+FROM node:22.11-alpine3.20 AS builder
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
@@ -18,6 +18,7 @@ RUN rm -f .env && \
     echo "VITE_BASE_URL=./api/" > .env && \
     apk add --no-cache python3 build-base gcc wget && \
     npm i && \
+    npm rebuild && \
     npm run build && \
     mkdir /opt/blog-server/client/ && \
     cp -a /opt/blog-client/dist/. /opt/blog-server/client/
