@@ -2,7 +2,7 @@
   <v-container fluid class="pa-0">
     <!-- Hero Banner Section -->
     <v-parallax
-      src="@/assets/img/banner.jpg"
+      :src="bannerImage"
       height="85vh"
       cover
       class="align-center text-white"
@@ -96,7 +96,17 @@ import { apiPostPosts } from '@/plugins/api/post'
 import type { ViewPosts } from '@/plugins/types/blog'
 import { mdiHiking, mdiNotebookMultiple } from '@mdi/js'
 
+import one from '@/assets/img/banner-1.jpg'
+import two from '@/assets/img/banner-2.jpg'
+import three from '@/assets/img/banner-3.jpg'
+import { coreStore } from '@/stores/app'
+
+const images = [one, two, three]
+
+const store = coreStore()
 const latestPosts = ref<ViewPosts[]>([])
+
+const bannerImage = computed(() => images[store.storeBannerIndex])
 
 onMounted(() => {
   apiPostPosts({

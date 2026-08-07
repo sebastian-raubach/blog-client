@@ -12,10 +12,12 @@ if (!name) {
 
 export const coreStore = defineStore('blog', {
   state: () => ({
+    bannerIndex: 0,
     token: undefined as Token | undefined,
     baseUrl: undefined as string | undefined,
   }),
   getters: {
+    storeBannerIndex: (state): number => state.bannerIndex ?? 0,
     storeToken: (state): Token | undefined => state.token,
     storeBaseUrl: (state): string | undefined => state.baseUrl,
   },
@@ -32,6 +34,9 @@ export const coreStore = defineStore('blog', {
     setBaseUrl (newBaseUrl: string) {
       this.baseUrl = newBaseUrl
     },
+    setBannerIndex (newBannerIndex: number) {
+      this.bannerIndex = Math.abs(newBannerIndex ?? 0) % 3
+    }
   },
   persist: {
     key: name,

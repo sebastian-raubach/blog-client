@@ -121,6 +121,7 @@
       }
 
       store.setBaseUrl(baseUrl)
+      store.setBannerIndex(store.storeBannerIndex + 1)
 
       return {
         store,
