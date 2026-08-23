@@ -14,6 +14,7 @@ declare module 'vue' {
     BlogEntryWizard: typeof import('./components/BlogEntryWizard.vue')['default']
     ConfirmModal: typeof import('./components/ConfirmModal.vue')['default']
     GpxMap: typeof import('./components/GpxMap.vue')['default']
+    HikeMovementBreakdown: typeof import('./components/HikeMovementBreakdown.vue')['default']
     HikeStatsChart: typeof import('./components/HikeStatsChart.vue')['default']
     HillDetails: typeof import('./components/HillDetails.vue')['default']
     HillProgress: typeof import('./components/HillProgress.vue')['default']

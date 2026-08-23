@@ -220,6 +220,13 @@
         </v-row>
       </template>
 
+      <template v-if="post && post.hikestats && post.hikestats.individualStats">
+        <HikeMovementBreakdown
+          :hike-stats="post.hikestats"
+          :photos="individualImageMap"
+        />
+      </template>
+
       <template v-if="post.videos && post.videos.length > 0">
         <v-divider class="mb-12" />
 
@@ -486,6 +493,8 @@
   const story = ref<ViewStories>()
   const storyPosts = ref<ViewPosts[]>([])
   const relatedPosts = ref<ViewPosts[]>([])
+
+  const individualImageMap = ref<Record<number, string>>()
   
   const selectedSite = ref<PostSite | undefined>(undefined)
   const selectedHill = ref<PostHill | undefined>(undefined)
@@ -640,6 +649,12 @@
   function update (id: number) {
     apiGetPost(id, result => {
       post.value = result
+
+      individualImageMap.value = {}
+      result.people.forEach(p => {
+        // @ts-expect-error
+        individualImageMap.value[p.personId] = `${store.storeBaseUrl}individual/${p.personId}/img`
+      })
     })
   }
 

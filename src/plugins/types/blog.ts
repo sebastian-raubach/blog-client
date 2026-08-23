@@ -198,6 +198,21 @@ export interface HikeStats {
     gpx: string;
     elevationProfile: string;
     timeDistanceProfile: string;
+    individualStats: { [index: string]: Section[] };
+}
+
+export interface Section {
+    from: number;
+    to: number;
+    type?: MovementType;
+}
+
+export const enum MovementType {
+    BIKE = 'BIKE',
+    WALK = 'WALK',
+    RUN = 'RUN',
+    TRAILER = 'TRAILER',
+    SWIM = 'SWIM',
 }
 
 export interface HikeRating {
