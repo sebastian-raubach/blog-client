@@ -108,6 +108,8 @@ import { mdiCalendar, mdiMagnify, mdiNotebookMultiple, mdiNotebookPlus } from '@
 import { refDebounced } from '@vueuse/core'
 
 const store = coreStore()
+const route = useRoute()
+const router = useRouter()
 
 const filteredPosts = ref<ViewPosts[]>([])
 const years = ref<YearCount[]>([])
@@ -118,6 +120,12 @@ const postType = ref<PostsType>()
 
 const isSearching = computed(() => Boolean(searchTerm.value && searchTerm.value.trim().length > 0))
 const debouncedSearchTerm = refDebounced(searchTerm, 500)
+
+interface QueryParams {
+  year?: string
+  search?: string
+  type?: string
+}
 
 function fetchPosts() {
   apiPostPosts({
@@ -159,6 +167,28 @@ watch([debouncedSearchTerm, year, postType], ([newSearchTerm], [oldSearchTerm]) 
     year.value = new Date().getFullYear()
   }
 
+  // Update URL parameters
+  const query = Object.assign({}, route.query) as QueryParams
+
+  if (year.value) {
+    query.year = `${year.value}`
+  } else {
+    delete query.year
+  }
+  if (hasSearchTerm) {
+    query.search = newSearchTerm?.trim()
+  } else {
+    delete query.search
+  }
+  if (postType.value) {
+    query.type = postType.value
+  } else {
+    delete query.type
+  }
+
+  // @ts-expect-error
+  router.replace({ query })
+
   fetchPosts()
 }, { immediate: true })
 
@@ -166,4 +196,20 @@ watch([debouncedSearchTerm, year, postType], ([newSearchTerm], [oldSearchTerm]) 
 watch(postType, () => {
   fetchYears()
 }, { immediate: true })
+
+onMounted(() => {
+  if (route.query) {
+    const params = route.query as QueryParams
+
+    if (params.year) {
+      year.value = +params.year
+    }
+    if (params.search) {
+      searchTerm.value = params.search
+    }
+    if (params.type) {
+      searchTerm.value = params.type
+    }
+  }
+})
 </script>
