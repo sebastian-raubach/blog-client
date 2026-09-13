@@ -25,11 +25,11 @@ export function useBlogEntryForm(existingEntry?: ViewPosts | null) {
         isNew: false,
       }
     }) ?? [],
-    individuals: existingEntry?.people.map(i => i.personId) ?? [],
+    individuals: (existingEntry?.people ?? []).map(i => i.personId) ?? [],
     videos: existingEntry?.videos ?? [],
     gpx: undefined,
     ratings: existingEntry?.hikerating ?? { view: 3, path: 3, weather: 3 },
-    peaks: existingEntry?.hills.map((p) => ({ ...p })) ?? [],
+    peaks: (existingEntry?.hills ?? []).map((p) => ({ ...p })) ?? [],
     start: existingEntry?.postStartDate ?? new Date().toISOString(),
     end: existingEntry?.postEndDate,
   })
