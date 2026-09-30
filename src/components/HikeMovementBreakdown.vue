@@ -93,7 +93,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { MovementType, type HikeStats, type Section } from '@/plugins/types/blog'
-import { mdiBike, mdiRun, mdiSwim, mdiTruckTrailer, mdiWalk } from '@mdi/js';
+import { mdiBagPersonal, mdiBike, mdiRun, mdiSwim, mdiTruckTrailer, mdiWalk } from '@mdi/js';
 
 interface MovementConfig {
   icon: string;
@@ -128,6 +128,7 @@ const MOVEMENT_CONFIG: Record<MovementType, MovementConfig> = {
   [MovementType.RUN]: { icon: mdiRun, color: '#EE5A24', label: 'Laufen' },
   [MovementType.TRAILER]: { icon: mdiTruckTrailer, color: '#833471', label: 'Anhänger' },
   [MovementType.SWIM]: { icon: mdiSwim, color: '#0652DD', label: 'Schwimmen' },
+  [MovementType.BACKPACK]: { icon: mdiBagPersonal, color: '#0652DD', label: 'Im Rucksack' },
 };
 
 function config(type: MovementType): MovementConfig {

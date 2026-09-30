@@ -213,6 +213,7 @@ export const enum MovementType {
     RUN = 'RUN',
     TRAILER = 'TRAILER',
     SWIM = 'SWIM',
+    BACKPACK = 'BACKPACK'
 }
 
 export interface HikeRating {

@@ -253,10 +253,10 @@
       <v-row>
         <v-col cols="12" class="mb-4">
           <h2 class="text-h4 font-weight-bold mb-1">
-            Photo Gallery
+            Bildergallerie
           </h2>
           <p class="text-subtitle-1 text-medium-emphasis">
-            Captures from the ridge and trail
+            Bilder von diesem Bericht
           </p>
         </v-col>
       </v-row>
