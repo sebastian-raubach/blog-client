@@ -54,11 +54,11 @@ export function useBlogEntryForm(existingEntry?: ViewPosts | null) {
           videos: form.videos,
         })
 
-        if (form.photos.length) {
+        if (form.photos.length || form.gpx?.minifiedFile) {
           const newPhotos = form.photos.filter(p => p.isNew)
           const oldPhotos = form.photos.filter(p => !p.isNew)
 
-          if (newPhotos.length) {
+          if (newPhotos.length || form.gpx?.minifiedFile) {
             const formData = new FormData()
             for (const photo of newPhotos) {
               if (photo.file) {
@@ -67,6 +67,11 @@ export function useBlogEntryForm(existingEntry?: ViewPosts | null) {
                 formData.append('image-is-primary', `${photo.isPrimary || false}`)
               }
             }
+
+            if (form.gpx?.minifiedFile) {
+              formData.append('gpx', form.gpx.minifiedFile)
+            }
+
             await apiPostPostImages(form.id, formData)
           }
 
@@ -112,7 +117,7 @@ export function useBlogEntryForm(existingEntry?: ViewPosts | null) {
             }
           }
 
-          if (form.type === 'hike' && form.gpx?.minifiedFile) {
+          if (form.gpx?.minifiedFile) {
             formData.append('gpx', form.gpx.minifiedFile)
           }
 

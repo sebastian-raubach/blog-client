@@ -103,6 +103,7 @@ const steps = computed<StepDef[]>(() => {
     return [
       { value: 'content', title: 'Inhalt', icon: mdiCardText },
       { value: 'media', title: 'Medien', icon: mdiMultimedia },
+      { value: 'gpx', title: 'Strecke', icon: mdiMapMarkerPath },
       { value: 'review', title: 'Vorschau', icon: mdiEyeCheck },
     ]
   }
